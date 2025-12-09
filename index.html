@@ -3,477 +3,583 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guía de Activación de Banca por Internet</title>
-    <!-- Carga de Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Carga de la fuente Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <title>Banco Fortaleza | Simulador & Solicitud</title>
     
-    <!-- Carga de librerías para generación directa de PDF (html2canvas y jspdf) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
-    <style>
-        /* Estilos generales y fuente */
-        body { font-family: 'Inter', sans-serif; }
-
-        /* Animaciones para el header */
-        @keyframes blob {
-          0%, 100% { transform: translate(0, 0) scale(1); }
-          33% { transform: translate(30px, -50px) scale(1.1); }
-          66% { transform: translate(-20px, 20px) scale(0.9); }
-        }
-        .animate-blob { animation: blob 7s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-
-        /* Media query para impresión */
-        @media print {
-          /* Ajustes de tamaño Carta */
-          @page { 
-            margin: 0.5cm !important; 
-            size: letter portrait; 
-          }
-          
-          /* CRÍTICO: Asegura que el cuerpo completo del documento se imprima */
-          body, .min-h-screen, main, #print-content { 
-            min-height: initial !important; 
-            height: auto !important; 
-            overflow: visible !important;
-            padding: 0 !important;
-            margin: 0 !important; 
-            background: white; 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact; 
-          }
-
-          .pb-20 { padding-bottom: 0 !important; }
-          /* Oculta el botón de impresión y otros elementos innecesarios */
-          .no-print { display: none !important; }
-          /* Asegura que los pasos no se corten entre páginas */
-          .print-break-inside { break-inside: avoid !important; }
-          /* Elimina sombras para impresión limpia */
-          .shadow-xl, .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; border: 1px solid #eee; }
-        }
-    </style>
-</head>
-<body class="min-h-screen bg-[#F0F4F8] font-sans text-slate-800 selection:bg-indigo-100 pb-20 print:bg-white print:pb-0">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
 
     <script>
-        // Función JavaScript para manejar la generación de PDF
-        let isGenerating = false;
-        
-        async function handleDownloadPDF() {
-            if (isGenerating) return;
-
-            const button = document.getElementById('pdf-download-button');
-            // SVG para el indicador de carga
-            const loadingSvg = '<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Generando PDF...';
-            // Contenido original del botón (Incluye el ícono de descarga estático)
-            const originalHtml = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 group-hover:scale-110 transition-transform"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar Guía Completa en PDF';
-
-            if (typeof window.html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-                console.error("Librerías de PDF no cargadas.");
-                return;
-            }
-
-            isGenerating = true;
-            button.innerHTML = loadingSvg;
-            button.disabled = true; // Deshabilitar durante la carga
-
-            const input = document.getElementById('print-content');
-
-            try {
-                // 1. Capturar todo el contenido como un canvas (imagen grande)
-                const canvas = await html2canvas(input, {
-                    scale: 2, 
-                    useCORS: true,
-                    allowTaint: true,
-                    scrollX: 0,
-                    scrollY: 0,
-                    windowWidth: input.scrollWidth,
-                    windowHeight: input.scrollHeight
-                });
-
-                const imgData = canvas.toDataURL('image/jpeg', 1.0);
-                
-                // 2. Inicializar PDF (Tamaño Carta - 'letter')
-                const pdf = new window.jspdf.jsPDF('p', 'mm', 'letter'); 
-                
-                const imgWidth = 215.9; // Ancho Carta en mm (8.5 inches)
-                const pageHeight = 279.4; // Altura Carta en mm (11 inches)
-                
-                // Calcular la altura total de la imagen en mm
-                const imgHeight = canvas.height * imgWidth / canvas.width;
-                let heightLeft = imgHeight;
-                let position = 0;
-
-                // 3. Añadir imagen al PDF, manejando múltiples páginas
-                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                heightLeft -= pageHeight;
-
-                // Recorre el resto de la imagen y añade páginas nuevas
-                while (heightLeft >= 0) { // Criterio de parada ajustado para evitar bucles infinitos
-                    position = heightLeft - imgHeight;
-                    pdf.addPage();
-                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                    heightLeft -= pageHeight;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { 
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif']
+                    },
+                    colors: {
+                        brand: {
+                            navy: '#002855',
+                            blue: '#004B87',
+                            orange: '#FF6B00',
+                            light: '#F8FAFC',
+                            gray: '#64748B',
+                            ivory: '#FDFDFD' 
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0, 40, 85, 0.08)',
+                        'floating': '0 25px 50px -12px rgba(0, 0, 0, 0.15)',
+                        'glow': '0 0 20px rgba(255, 107, 0, 0.3)',
+                        'inner-light': 'inset 0 2px 4px 0 rgba(255, 255, 255, 0.3)'
+                    },
+                    animation: {
+                        'slide-down': 'slideDown 0.4s ease-out forwards',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'pulse-slow': 'pulse 3s infinite',
+                        'shine': 'shine 3s infinite'
+                    },
+                    keyframes: {
+                        slideDown: { '0%': { opacity: '0', transform: 'translateY(-10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                        shine: { '0%': { backgroundPosition: '200% center' }, '100%': { backgroundPosition: '-200% center' } }
+                    }
                 }
-                
-                // 4. Guardar el archivo
-                pdf.save('Guia_Activacion_Banca_Internet.pdf');
-            } catch (error) {
-                console.error("Error al generar el PDF:", error);
-            } finally {
-                isGenerating = false;
-                // Restaurar el botón
-                button.innerHTML = originalHtml;
-                button.disabled = false;
             }
         }
     </script>
 
-    <!-- El contenido completo que queremos capturar en el PDF se envuelve en este div -->
-    <div id="print-content">
+    <style>
+        /* Fondo Blanco Elegante con luz ambiental sutil */
+        body { 
+            background-color: #FDFDFD;
+            background-image: radial-gradient(circle at 15% 10%, rgba(0, 75, 135, 0.03) 0%, transparent 40%),
+                              radial-gradient(circle at 85% 90%, rgba(255, 107, 0, 0.03) 0%, transparent 40%);
+            background-attachment: fixed;
+        }
+        
+        /* --- SLIDERS CORREGIDOS --- */
+        input[type=range] { 
+            -webkit-appearance: none; /* Necesario para customizar */
+            width: 100%; 
+            background: transparent; /* Fondo transparente del input general */
+            margin: 10px 0;
+        }
+        
+        /* La línea (Track) - Chrome/Safari/Edge */
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; 
+            height: 8px; 
+            background: #94A3B8; /* GRIS VISIBLE */
+            border-radius: 99px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: none;
+        }
+        
+        /* La línea (Track) - Firefox */
+        input[type=range]::-moz-range-track {
+            width: 100%; 
+            height: 8px; 
+            background: #94A3B8; /* GRIS VISIBLE */
+            border-radius: 99px;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+            cursor: pointer;
+            border: none;
+        }
 
-        <!-- --- HERO HEADER (COLOR CLARO) --- -->
-        <header class="bg-blue-50 text-slate-900 pt-20 pb-24 relative overflow-hidden shadow-lg print:pt-10 print:pb-10 print:shadow-none print:bg-white">
-            <!-- Decoración de fondo -->
-            <div class="absolute top-0 right-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob"></div>
-            <div class="absolute bottom-0 left-0 w-96 h-96 bg-cyan-400 rounded-full mix-blend-multiply filter blur-3xl opacity-10 animate-blob animation-delay-2000"></div>
+        /* El botón (Thumb) - Chrome/Safari/Edge */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; 
+            height: 32px; 
+            width: 32px; 
+            border-radius: 50%;
+            background: white; 
+            border: 4px solid #FF6B00; 
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.4); 
+            cursor: pointer; 
+            margin-top: -12px; /* Centrado vertical respecto al track de 8px: (8 - 32) / 2 = -12 */
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* El botón (Thumb) - Firefox */
+        input[type=range]::-moz-range-thumb {
+            height: 32px; 
+            width: 32px; 
+            border-radius: 50%;
+            background: white; 
+            border: 4px solid #FF6B00; 
+            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.4); 
+            cursor: pointer; 
+            border: none; /* Reset border for firefox specific quirk */
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
+        input[type=range]:hover::-moz-range-thumb { transform: scale(1.2); }
+
+        /* --- BOTONES --- */
+        .module-btn { transition: all 0.3s ease; opacity: 0.7; transform: scale(0.98); }
+        .module-btn:hover { opacity: 1; transform: scale(1); }
+        .module-btn.active { 
+            opacity: 1; transform: scale(1); 
+            background: white; 
+            box-shadow: 0 20px 40px -10px rgba(0, 40, 85, 0.12); 
+            border: 1px solid rgba(255, 107, 0, 0.2);
+        }
+        .module-btn.active .icon-container { background: #FF6B00; color: white; box-shadow: 0 10px 20px -5px rgba(255, 107, 0, 0.4); }
+
+        /* Botones de Producto (Pills) */
+        .product-pill { transition: all 0.2s; border: 1px solid #E2E8F0; background: white; }
+        .product-pill:hover { border-color: #94A3B8; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
+        .product-pill.active { 
+            background: #002855; color: white; border-color: #002855; 
+            box-shadow: 0 10px 25px -5px rgba(0, 40, 85, 0.3); 
+            transform: scale(1.05); 
+        }
+
+        /* Efecto Destello en Botón Principal - NARANJA */
+        .btn-shine {
+            background-size: 200% auto;
+            background-image: linear-gradient(to right, #FF6B00 0%, #FF9500 51%, #FF6B00 100%);
+            transition: 0.5s;
+            color: white;
+        }
+        .btn-shine:hover { 
+            background-position: right center; 
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.6);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col items-center pt-8 pb-12 px-4 font-sans text-slate-800">
+
+    <!-- HEADER -->
+    <header class="mb-8 text-center animate-fade-in relative z-10">
+        <div class="inline-flex items-center gap-3 bg-white/80 backdrop-blur-md px-8 py-3 rounded-full shadow-soft mb-6 border border-white">
+            <i class="fa-solid fa-building-columns text-2xl text-brand-orange"></i>
+            <span class="font-display font-bold text-brand-navy tracking-tight text-xl">BANCO FORTALEZA</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-display font-bold text-brand-navy mb-2 tracking-tight">Tu meta, nuestro plan.</h1>
+        <p class="text-slate-500 font-light text-lg">Simula y solicita tu producto ideal.</p>
+    </header>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="w-full max-w-5xl space-y-2"> <!-- Espacio muy reducido entre bloques -->
+
+        <!-- PASO 1: SELECTOR DE MÓDULOS -->
+        <div class="grid grid-cols-3 gap-4 md:gap-6 mb-4">
+            <button onclick="selectModule('CREDITO')" id="mod-CREDITO" class="module-btn active p-5 rounded-[2rem] bg-white border border-slate-100 flex flex-col items-center gap-3 text-center group">
+                <div class="icon-container w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-slate-50 text-brand-navy flex items-center justify-center text-2xl md:text-3xl transition-all duration-300">
+                    <i class="fa-solid fa-hand-holding-dollar"></i>
+                </div>
+                <span class="font-display font-bold text-sm md:text-base text-brand-navy group-hover:text-brand-orange transition-colors">Préstamos</span>
+            </button>
+
+            <button onclick="selectModule('AHORRO')" id="mod-AHORRO" class="module-btn p-5 rounded-[2rem] bg-white border border-slate-100 flex flex-col items-center gap-3 text-center group">
+                <div class="icon-container w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-slate-50 text-brand-navy flex items-center justify-center text-2xl md:text-3xl transition-all duration-300">
+                    <i class="fa-solid fa-piggy-bank"></i>
+                </div>
+                <span class="font-display font-bold text-sm md:text-base text-brand-navy group-hover:text-brand-orange transition-colors">Ahorro</span>
+            </button>
+
+            <button onclick="selectModule('DPF')" id="mod-DPF" class="module-btn p-5 rounded-[2rem] bg-white border border-slate-100 flex flex-col items-center gap-3 text-center group">
+                <div class="icon-container w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-slate-50 text-brand-navy flex items-center justify-center text-2xl md:text-3xl transition-all duration-300">
+                    <i class="fa-solid fa-vault"></i>
+                </div>
+                <span class="font-display font-bold text-sm md:text-base text-brand-navy group-hover:text-brand-orange transition-colors">Inversión</span>
+            </button>
+        </div>
+
+        <!-- PASO 2: SELECTOR DE PRODUCTOS (PILLS CENTRADOS) -->
+        <div class="relative animate-slide-down z-20 py-1">
+            <!-- Centrado con justify-center -->
+            <div id="productsContainer" class="flex gap-3 overflow-x-auto hide-scrollbar p-2 justify-center">
+                <!-- Se llena con JS -->
+            </div>
+        </div>
+
+        <!-- PASO 3: SIMULADOR (TARJETA PRINCIPAL) -->
+        <div id="simulatorCard" class="bg-white rounded-[3rem] shadow-floating border border-white p-8 md:p-12 relative overflow-hidden animate-fade-in mt-4">
             
-            <div class="max-w-4xl mx-auto px-6 relative z-10 text-center">
-                <!-- Badge (Icono Wifi) -->
-                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-cyan-300 bg-cyan-100 backdrop-blur-sm text-cyan-800 text-xs font-bold tracking-widest uppercase mb-6">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 20h.01"/><path d="M2 8.82a15 15 0 0 1 20 0"/><path d="M5 12.859a9 9 0 0 1 14 0"/><path d="M8.5 16.9a3 3 0 0 1 7 0"/></svg>
-                    Guía Oficial • Banco Unión
-                </div>
-                <h1 class="text-4xl md:text-6xl font-extrabold tracking-tight mb-4 leading-tight text-slate-900">
-                    Activar Banca <br class="md:hidden"/> por Internet
-                </h1>
-                <div class="w-24 h-1 bg-gradient-to-r from-cyan-600 to-blue-700 mx-auto rounded-full mb-6"></div>
-                <!-- Párrafo ajustado para fondo azul claro -->
-                <p class="text-slate-700 text-lg font-light max-w-xl mx-auto">
-                    Sigue los pasos en orden para configurar tu acceso seguro UNIMÓVIL Plus.
-                </p>
-            </div>
-        </header>
+            <!-- Decoración sutil de fondo -->
+            <div class="absolute top-0 right-0 w-96 h-96 bg-brand-light rounded-bl-full opacity-50 pointer-events-none"></div>
 
-        <main class="max-w-4xl mx-auto px-6 -mt-16 relative z-20" id="main-container">
-            
-            <!-- --- PREREQUISITES CARD --- -->
-            <div class="bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl p-8 mb-12 border-t-4 border-cyan-400 print:shadow-none print:border">
-                <div class="flex flex-col md:flex-row gap-6 items-start">
-                    <div class="bg-cyan-50 p-4 rounded-xl text-cyan-700 shrink-0">
-                        <!-- Icono AlertTriangle 32 -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-bold text-slate-900 mb-4 tracking-tight uppercase">🛑 Antes de empezar</h3>
-                        <p class="text-slate-600 mb-6">Asegúrate de tener a mano la siguiente información crítica:</p>
-                        
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="group p-5 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 hover:border-cyan-300 transition-all duration-300">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <!-- Icono User 18 -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-600"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                                    <span class="font-bold text-slate-900 text-sm">Usuario (Numérico)</span>
-                                </div>
-                                <div class="text-sm text-slate-500 pl-8">
-                                    Revisa tu <span class="font-semibold text-cyan-700 bg-cyan-50 px-1 rounded">Correo Electrónico</span>
-                                </div>
-                            </div>
-
-                            <div class="group p-5 bg-slate-50 hover:bg-white rounded-xl border border-slate-200 hover:border-cyan-300 transition-all duration-300">
-                                <div class="flex items-center gap-3 mb-2">
-                                    <!-- Icono Key 18 -->
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="text-cyan-600"><path d="M10 21v-7m4 7v-7m-7 0h14a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1a2 2 0 0 1-2-2H8a2 2 0 0 0-2 2h-1a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-1m-7 7V7a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v7"/></svg>
-                                    <span class="font-bold text-slate-900 text-sm">Contraseña (4 números)</span>
-                                </div>
-                                <div class="text-sm text-slate-500 pl-8">
-                                    Revisa tus <span class="font-semibold text-cyan-700 bg-cyan-50 px-1 rounded">SMS</span> del celular
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- --- PART 1 --- -->
-            <div class="flex items-start gap-4 mb-8 border-b border-slate-200 pb-4 print-break-inside">
-                <div class="bg-cyan-100 p-3 rounded-xl text-cyan-800 shadow-sm print:bg-slate-100">
-                    <!-- Icono Monitor 24 -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M12 17v4"/><path d="M8 21h8"/></svg>
-                </div>
-                <div>
-                    <h2 class="text-2xl font-bold text-slate-900 tracking-tight">PARTE 1: En el Navegador</h2>
-                    <p class="text-slate-500 text-sm uppercase tracking-wider font-medium mt-1">Configuración inicial de seguridad</p>
-                </div>
-            </div>
-
-            <div class="space-y-6 mb-16">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 relative z-10">
                 
-                <!-- Paso 1 -->
-                <div class="group bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 text-white font-bold text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                            01
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800">Entrar a la web</h3>
-                    </div>
-                    <div class="pl-4 md:pl-14 border-l-2 border-slate-100 group-hover:border-cyan-100 transition-colors">
-                        <ul class="space-y-3">
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Escribe en el buscador el portal oficial de banca por internet.</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Entra a la primera opción.</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Paso 2 -->
-                <div class="group bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 text-white font-bold text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                            02
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800">Poner tus datos</h3>
-                    </div>
-                    <div class="pl-4 md:pl-14 border-l-2 border-slate-100 group-hover:border-cyan-100 transition-colors">
-                        <ul class="space-y-3">
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>En <strong>Usuario</strong>, escribe el número de tu correo.</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Copia las letras y números de la imagen (código captcha). Clic en <strong>Iniciar Sesión</strong>.</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Escribe la <strong>clave de 4 números</strong> de tu SMS. Clic en <strong>Iniciar Sesión</strong>.</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Paso 3 -->
-                <div class="group bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 text-white font-bold text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                            03
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800">Crear nueva Clave</h3>
-                    </div>
-                    <div class="pl-4 md:pl-14 border-l-2 border-slate-100 group-hover:border-cyan-100 transition-colors">
-                        <div class="space-y-4">
-                            
-                            <!-- ACCIÓN 1: Ingresar clave SMS -->
-                            <ul class="space-y-3">
-                                <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                    <span>Escribe la <strong>clave de 4 números</strong> de tu SMS.</span>
-                                </li>
-                            </ul>
-
-                            <!-- ÉNFASIS ESPECIAL SOLICITADO - CONTRASEÑA NUEVA -->
-                            <div class="bg-red-50 text-red-900 p-5 rounded-xl ml-2 shadow-md my-5 relative overflow-hidden border-2 border-red-100 print:bg-white print:text-black print:border-slate-300">
-                                <!-- Background Icon (Lock 64) -->
-                                <div class="absolute top-0 right-0 p-4 opacity-10 text-red-600">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                </div>
-                                <!-- Content -->
-                                <div class="relative z-10 flex gap-4 items-center">
-                                    <!-- Foreground Icon (Lock 24) -->
-                                    <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100 text-red-500">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                                    </div>
-                                    <p class="text-sm font-medium leading-relaxed">
-                                        <span class="text-red-600 font-bold text-base">Requisito de Seguridad:</span> <br class='sm:hidden'/>
-                                        Escribe tu <strong>nueva clave</strong> dos veces. <br/>
-                                        <span class="text-red-700/80 text-xs">(Mínimo 10 caracteres, mayúsculas, minúsculas, números, signos. Ej: Maria.2024)</span>
-                                    </p>
-                                </div>
-                            </div>
-
-
-                            <!-- ACCIÓN 2: Código de 6 números -->
-                            <ul class="space-y-3">
-                                <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                    <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                    <span>Escribe el <strong>código de 6 números</strong> que llegó por SMS. Clic en <strong>Continuar</strong>.</span>
-                                </li>
-                            </ul>
-                            
-                            <div class="flex items-center gap-3 bg-rose-50 px-4 py-3 rounded-lg border border-rose-100 text-rose-800 text-sm font-medium">
-                                <!-- Icono AlertTriangle 16 -->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                                Aparecerán las opciones "Registrar" y "Salir", elige "Salir" dos veces.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Paso 4 -->
-                <div class="group bg-white rounded-xl p-6 shadow-sm border border-slate-100 hover:shadow-md hover:border-cyan-200 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="flex items-center justify-center w-10 h-10 rounded-full bg-slate-900 text-white font-bold text-lg shadow-lg shadow-cyan-500/20 group-hover:scale-110 transition-transform">
-                            04
-                        </div>
-                        <h3 class="text-xl font-bold text-slate-800">Personalización de Usuario</h3>
-                    </div>
-                    <div class="pl-4 md:pl-14 border-l-2 border-slate-100 group-hover:border-cyan-100 transition-colors">
-                        <ul class="space-y-3 mb-4">
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Vuelve a ingresar el <strong>Usuario</strong> enviado a tu correo.</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Copia las letras y números de la imagen (código captcha). Clic en <strong>Iniciar Sesión</strong>.</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Introduce la <strong>clave modificada</strong> en el Paso 3. Clic en <strong>Iniciar Sesión</strong>.</span>
-                            </li>
-                        </ul>
-
-                        <!-- ÉNFASIS ESPECIAL SOLICITADO - NUEVO USUARIO -->
-                        <div class="bg-red-50 text-red-900 p-5 rounded-xl ml-2 shadow-md my-5 relative overflow-hidden border-2 border-red-100 print:bg-white print:text-black print:border-slate-300">
-                            <!-- Background Icon (User 64) -->
-                            <div class="absolute top-0 right-0 p-4 opacity-10 text-red-600">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                            </div>
-                            <div class="relative z-10 flex gap-4 items-center">
-                                <!-- Foreground Icon (Shield 24) -->
-                                <div class="bg-white p-2 rounded-lg shadow-sm border border-red-100 text-red-500">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                                </div>
-                                <p class="text-sm font-medium leading-relaxed">
-                                    Introduce un <span class="text-red-600 font-bold text-base">nuevo usuario</span> con letras y números <br/>
-                                    <span class="text-red-700/80 text-xs">(mínimo 7 caracteres)</span>, y clic en <strong>Validar</strong>.
-                                </p>
-                            </div>
-                        </div>
-
-                        <ul class="space-y-3">
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span>Elige una imagen y escribe una frase. Clic en <strong>Continuar</strong>.</span>
-                            </li>
-                            <li class="flex items-start gap-3 text-sm text-slate-600 leading-relaxed group-hover:text-slate-700">
-                                <span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-cyan-400 shrink-0"></span>
-                                <span><strong>Clave transaccional:</strong> Escribe el código de 6 dígitos que te llegó por SMS, clic en <strong>Continuar</strong>.</span>
-                            </li>
-                        </ul>
-
-                        <div class="mt-4 flex items-center gap-3 bg-rose-50 px-4 py-3 rounded-lg border border-rose-100 text-rose-800 text-sm font-medium">
-                            <!-- Icono AlertTriangle 16 -->
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                            Aparecerán las opciones "Registrar" y "Salir", elige "Salir" dos veces.
-                        </div>
-
-                        <div class="mt-6 text-center">
-                            <span class="inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-3 py-1 rounded-full border border-emerald-200">
-                                ¡LISTO! Cierra la página web.
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-            <!-- --- PART 2 --- -->
-            <div class="print-break-inside">
-                <div class="flex items-start gap-4 mb-8 border-b border-slate-200 pb-4 print-break-inside">
-                    <div class="bg-cyan-100 p-3 rounded-xl text-cyan-800 shadow-sm print:bg-slate-100">
-                        <!-- Icono Smartphone 24 -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg>
-                    </div>
-                    <div>
-                        <h2 class="text-2xl font-bold text-slate-900 tracking-tight">PARTE 2: En la Aplicación</h2>
-                        <p class="text-slate-500 text-sm uppercase tracking-wider font-medium mt-1">UNIMÓVIL PLUS (Celular)</p>
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-3 gap-6 mb-12">
+                <!-- COLUMNA IZQUIERDA: CONTROLES -->
+                <div class="lg:col-span-7 space-y-10">
                     
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-300 to-blue-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-bold text-lg text-slate-800">Descargar</h4>
-                            <span class="text-slate-200 text-4xl font-black opacity-50 select-none">5</span>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-12 h-12 rounded-2xl bg-brand-orange text-white flex items-center justify-center shadow-lg shadow-orange-200">
+                            <i id="productIcon" class="fa-solid fa-car text-xl"></i>
                         </div>
-                        <p class="text-sm text-slate-600 mb-2">Busca <strong>UNIMóvil Plus</strong> en la tienda de tu celular (Play Store).</p>
-                        <div class="bg-slate-100 p-2 rounded text-xs text-center text-slate-500 font-mono">Instala y abre</div>
+                        <div>
+                            <h2 id="productTitle" class="text-2xl font-display font-bold text-brand-navy">Crédito Vehicular</h2>
+                            <p id="productDesc" class="text-sm text-slate-500">Compra tu auto nuevo o usado con las mejores tasas.</p>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-300 to-blue-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-bold text-lg text-slate-800">Ingresar</h4>
-                            <span class="text-slate-200 text-4xl font-black opacity-50 select-none">6</span>
+                    <!-- Slider Monto -->
+                    <div>
+                        <div class="flex justify-between items-end mb-5">
+                            <label class="font-bold text-brand-navy uppercase text-xs tracking-widest text-opacity-70">Monto Solicitado</label>
+                            <div class="flex items-baseline gap-1">
+                                <span id="displayMonto" class="text-4xl font-display font-bold text-brand-navy tracking-tight">0</span>
+                                <span class="text-lg font-medium text-slate-400">Bs</span>
+                            </div>
                         </div>
-                        <ul class="text-sm text-slate-600 space-y-2">
-                            <li>Pon tu <strong>NUEVO USUARIO</strong>.</li>
-                            <li>Pon tu <strong>NUEVA CONTRASEÑA</strong>.</li>
-                            <li class="flex items-center gap-2 bg-blue-50 p-1.5 rounded text-blue-800 text-xs font-medium">
-                                <!-- Icono CheckCircle 12 -->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
-                                Tickear la imagen
-                            </li>
-                            <li>Clic <strong>Iniciar Sesión</strong>.</li>
-                        </ul>
+                        <div class="px-2">
+                            <input type="range" id="inputMonto" oninput="calculate()">
+                        </div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1">
+                            <span id="lblMinMonto">1k</span>
+                            <span id="lblMaxMonto">100k</span>
+                        </div>
                     </div>
 
-                    <div class="bg-white rounded-xl p-6 shadow-sm border border-slate-100 relative overflow-hidden group hover:-translate-y-1 transition-all duration-300 print-break-inside print:shadow-none print:border-slate-300">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-cyan-300 to-blue-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></div>
-                        <div class="flex justify-between items-center mb-4">
-                            <h4 class="font-bold text-lg text-slate-800">Registrar</h4>
-                            <span class="text-slate-200 text-4xl font-black opacity-50 select-none">7</span>
+                    <!-- Slider Plazo -->
+                    <div>
+                        <div class="flex justify-between items-end mb-5">
+                            <label class="font-bold text-brand-navy uppercase text-xs tracking-widest text-opacity-70">Plazo</label>
+                            <div class="flex items-baseline gap-1">
+                                <span id="displayPlazo" class="text-4xl font-display font-bold text-brand-navy tracking-tight">0</span>
+                                <span id="unitPlazo" class="text-lg font-medium text-slate-400">meses</span>
+                            </div>
                         </div>
-                        <ul class="text-sm text-slate-600 space-y-2">
-                            <li>Presiona <strong>REGISTRAR</strong> y luego <strong>FINALIZAR</strong>.</li>
-                            <li>Toca <strong>"Solicitar token"</strong>.</li>
-                            <li>Pon el código SMS y presiona <strong>CONFIRMAR</strong>.</li>
-                            <li>Clic en <strong>Cerrar</strong>.</li>
-                        </ul>
+                        <div class="px-2">
+                            <input type="range" id="inputPlazo" oninput="calculate()">
+                        </div>
+                        <div class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1">
+                            <span id="lblMinPlazo">1</span>
+                            <span id="lblMaxPlazo">60</span>
+                        </div>
+                    </div>
+
+                    <!-- Info Requisitos Rápida -->
+                    <div class="bg-slate-50 p-5 rounded-2xl flex gap-4 border border-slate-100 items-start">
+                        <div class="mt-1 bg-white p-1 rounded-full text-brand-blue shadow-sm"><i class="fa-solid fa-check"></i></div>
+                        <div class="text-sm text-brand-navy/80">
+                            <span class="font-bold block text-brand-navy text-xs uppercase mb-1">Requisitos Básicos:</span>
+                            <p id="requirementsText" class="leading-relaxed font-light">Cedula de identidad, Respaldo de ingresos, Factura de servicios básicos.</p>
+                        </div>
                     </div>
 
                 </div>
-            </div>
 
-            <!-- --- SUCCESS FOOTER --- -->
-            <div class="bg-blue-100 rounded-2xl p-8 md:p-12 text-center text-slate-900 relative overflow-hidden shadow-2xl print:bg-white print:text-black print:border print:shadow-none">
-                <div class="relative z-10">
-                    <div class="inline-flex p-3 bg-cyan-500/20 rounded-full text-cyan-700 mb-4 border border-cyan-500/30">
-                        <!-- Icono CheckCircle 32 -->
-                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class=""><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+                <!-- COLUMNA DERECHA: RESULTADOS (Dark Card) -->
+                <div class="lg:col-span-5 flex flex-col justify-between bg-brand-navy rounded-[2.5rem] p-10 text-white relative overflow-hidden shadow-2xl shadow-blue-900/20">
+                    
+                    <!-- Brillo de fondo -->
+                    <div class="absolute -top-20 -right-20 w-64 h-64 bg-brand-blue rounded-full blur-3xl opacity-50"></div>
+                    <div class="absolute bottom-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cube-coat.png')] opacity-5"></div>
+
+                    <div class="relative z-10 text-center lg:text-left">
+                        <p class="text-brand-orange font-bold text-xs uppercase tracking-widest mb-4" id="resultLabel">CUOTA ESTIMADA</p>
+                        
+                        <div class="flex items-baseline justify-center lg:justify-start gap-2 mb-2">
+                            <span id="resultValue" class="text-6xl font-display font-bold tracking-tight">0</span>
+                            <span class="text-2xl font-medium text-white/50">Bs</span>
+                        </div>
+                        <p id="resultSub" class="text-sm text-white/60 mb-8 font-light">Pago mensual aproximado</p>
+
+                        <div class="bg-white/10 rounded-2xl p-4 backdrop-blur-md border border-white/10 mb-4 flex justify-between items-center">
+                            <span class="text-sm text-white/80 font-light">Tasa Anual Ref.</span>
+                            <span id="rateValue" class="font-bold text-white bg-white/20 px-2 py-1 rounded-lg">0%</span>
+                        </div>
+                        
+                        <div id="capacityWarning" class="hidden bg-red-500/20 border border-red-500/30 p-3 rounded-xl text-xs text-red-100 mt-4 flex gap-2 items-start justify-center lg:justify-start backdrop-blur-sm">
+                             <i class="fa-solid fa-triangle-exclamation mt-0.5"></i>
+                             <span>Tu cuota excede el 40% de tu ingreso estimado.</span>
+                        </div>
                     </div>
-                    <h2 class="text-2xl font-bold mb-2">Actualización de Token Exitoso</h2>
-                    <p class="text-slate-600">¡FELICIDADES! Ya puedes usar tu banca móvil.</p>
+
+                    <div class="mt-8 relative z-10">
+                        <button onclick="openLeadModal()" class="w-full py-5 btn-shine text-white font-bold text-lg rounded-2xl shadow-glow transition-all transform hover:-translate-y-1 flex justify-center items-center gap-3 group">
+                            <span>ME INTERESA</span>
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                        </button>
+                        <p class="text-center text-[10px] text-white/40 mt-4 tracking-wider uppercase">Evaluación sujeta a políticas de crédito</p>
+                    </div>
                 </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL POPUP (LEAD FORM) -->
+    <div id="leadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-brand-navy/80 backdrop-blur-md transition-opacity opacity-0" id="modalBackdrop" onclick="closeLeadModal()"></div>
+        
+        <!-- Modal Content -->
+        <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="modalContent">
+            
+            <div class="bg-brand-navy p-8 text-white text-center relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cube-coat.png')] opacity-10"></div>
+                
+                <button onclick="closeLeadModal()" class="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
+                
+                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-brand-orange text-3xl mx-auto mb-4 backdrop-blur-sm border border-white/20 shadow-inner">
+                    <i class="fa-regular fa-paper-plane"></i>
+                </div>
+                <h3 class="text-2xl font-display font-bold">Solicitar Contacto</h3>
+                <p class="text-white/60 text-sm font-light mt-1">Un oficial experto te asesorará.</p>
             </div>
 
-            <!-- --- UBICACIÓN DEL BOTÓN DE DESCARGA (AL FINAL DE LA PÁGINA) --- -->
-            <div class="py-12 flex justify-center no-print">
-                <button 
-                    id="pdf-download-button"
-                    onclick="handleDownloadPDF()"
-                    class="group relative inline-flex items-center justify-center px-8 py-3 font-semibold text-white transition-all duration-200 bg-emerald-600 rounded-full hover:bg-emerald-700 hover:shadow-lg hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                    <!-- Icono Download 18 -->
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2 group-hover:scale-110 transition-transform"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Descargar Guía Completa en PDF
-                </button>
-            </div>
+            <div class="p-8">
+                <form id="leadForm" onsubmit="event.preventDefault(); submitLead();" class="space-y-5">
+                    
+                    <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
+                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">INTERÉS EN</p>
+                        <p class="font-bold text-brand-navy text-lg" id="modalSummary">...</p>
+                    </div>
 
-        </main>
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <i class="fa-regular fa-user absolute left-4 top-4 text-slate-400"></i>
+                            <input type="text" required class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all placeholder-slate-300 text-brand-navy font-medium" placeholder="Nombre Completo">
+                        </div>
+                        <div class="relative">
+                            <i class="fa-solid fa-mobile-screen absolute left-4 top-4 text-slate-400"></i>
+                            <input type="tel" required class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all placeholder-slate-300 text-brand-navy font-medium" placeholder="Celular / WhatsApp">
+                        </div>
+                        
+                        <!-- Ingreso para validar 40% -->
+                        <div id="incomeInputGroup" class="relative">
+                            <i class="fa-solid fa-wallet absolute left-4 top-4 text-slate-400"></i>
+                            <input type="number" id="modalIngreso" required oninput="checkCapacity()" class="w-full pl-12 pr-12 py-3 bg-white border border-slate-200 rounded-xl focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all placeholder-slate-300 text-brand-navy font-bold" placeholder="Ingreso Mensual">
+                            <span class="absolute right-4 top-4 text-xs font-bold text-slate-400">Bs</span>
+                        </div>
+                        <p id="capacityMsg" class="text-xs text-red-500 mt-1 hidden text-center bg-red-50 p-2 rounded-lg border border-red-100"><i class="fa-solid fa-circle-exclamation mr-1"></i> Ingreso insuficiente para la cuota calculada.</p>
+                    </div>
+
+                    <button type="submit" id="btnSubmit" class="w-full py-4 bg-brand-navy hover:bg-brand-blue text-white font-bold rounded-xl shadow-lg transition-all mt-4">
+                        ENVIAR SOLICITUD
+                    </button>
+                </form>
+            </div>
+        </div>
     </div>
+
+    <!-- DATA & LOGIC ENGINE -->
+    <script>
+        // BASE DE DATOS ACTUALIZADA V25.1
+        const DATA = {
+            CREDITO: [
+                { id: 'c_quiro', icon: 'fa-signature', name: 'Consumo Simple', desc: 'Sin garantía real. Firma personal.', min: 14000, max: 210000, minP: 1, maxP: 48, unit: 'meses', req: 'Carnet de Identidad, 3 últimas boletas de pago, Factura de luz.', tasas: 0.18 },
+                { id: 'c_personal', icon: 'fa-user-group', name: 'Con Garante', desc: 'Mejores condiciones con garante.', min: 14000, max: 210000, minP: 1, maxP: 60, unit: 'meses', req: 'CI solicitante y garante, Respaldo patrimonial garante.', tasas: 0.17 },
+                { id: 'c_vehicular', icon: 'fa-car', name: 'Vehicular', desc: 'Auto nuevo o usado.', min: 35000, max: 350000, minP: 12, maxP: 60, unit: 'meses', req: 'Proforma del vehículo, Aporte propio 10-20%.', tasas: 0.125 },
+                { id: 'c_vivienda', icon: 'fa-house-chimney', name: 'Vivienda', desc: 'Compra, construcción o mejora.', min: 140000, max: 3500000, minP: 60, maxP: 240, unit: 'meses', req: 'Avalúo del inmueble, Aporte propio 20%.', tasas: 0.10 }
+            ],
+            AHORRO: [
+                { id: 'a_agil', icon: 'fa-bolt', name: 'Fortaleza Ágil', desc: 'Tu dinero siempre disponible.', min: 1000, max: 1000000, minP: 1, maxP: 60, unit: 'meses', req: 'Solo CI vigente y monto de apertura.', tasas: 0.0425, isGain: true },
+                { id: 'a_crece', icon: 'fa-chart-line', name: 'Fortaleza Crece', desc: 'Gana más ahorrando más.', min: 5000, max: 1000000, minP: 1, maxP: 60, unit: 'meses', req: 'CI vigente, Monto apertura 5k.', tasas: 0.045, isGain: true }
+            ],
+            DPF: [
+                { id: 'dpf_promo', icon: 'fa-certificate', name: 'DPF Promo', desc: 'Máxima rentabilidad a plazo.', min: 1000, max: 500000, minP: 180, maxP: 1440, unit: 'días', req: 'CI vigente. Tasas promocionales 2025.', tasas: 0.06, isGain: true }
+            ]
+        };
+
+        let currentModule = 'CREDITO';
+        let currentProd = DATA.CREDITO[0];
+        let currentCalculatedValue = 0; // Cuota o Ganancia
+
+        const money = new Intl.NumberFormat('es-BO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+        // INICIALIZAR
+        window.onload = () => {
+            selectModule('CREDITO');
+        };
+
+        function selectModule(mod) {
+            currentModule = mod;
+            
+            // Actualizar Botones Módulo
+            document.querySelectorAll('.module-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`mod-${mod}`).classList.add('active');
+
+            // Renderizar Pills de Productos
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = '';
+            
+            DATA[mod].forEach((prod, index) => {
+                const btn = document.createElement('button');
+                btn.className = `product-pill flex-shrink-0 px-6 py-2 rounded-full font-medium text-sm text-brand-navy bg-white shadow-sm flex items-center gap-2 ${index === 0 ? 'active' : ''}`;
+                btn.onclick = () => selectProduct(prod, btn);
+                btn.innerHTML = `<i class="fa-solid ${prod.icon}"></i> ${prod.name}`;
+                container.appendChild(btn);
+            });
+
+            // Seleccionar el primero por defecto
+            selectProduct(DATA[mod][0]);
+        }
+
+        function selectProduct(prod, btnElement = null) {
+            currentProd = prod;
+            
+            // Estilos de Pills
+            if(btnElement) {
+                document.querySelectorAll('.product-pill').forEach(b => b.classList.remove('active'));
+                btnElement.classList.add('active');
+            } else {
+                // Si viene de selectModule, buscamos el primero
+                const firstBtn = document.querySelector('.product-pill');
+                if(firstBtn) firstBtn.classList.add('active');
+            }
+
+            // Actualizar UI Simulador
+            document.getElementById('productTitle').textContent = prod.name;
+            document.getElementById('productDesc').textContent = prod.desc;
+            document.getElementById('productIcon').className = `fa-solid ${prod.icon} text-xl`;
+            document.getElementById('requirementsText').textContent = prod.req;
+            document.getElementById('rateValue').textContent = (prod.tasas * 100).toFixed(2) + '% Anual';
+
+            // Configurar Sliders
+            const slMonto = document.getElementById('inputMonto');
+            slMonto.min = prod.min; slMonto.max = prod.max; slMonto.value = prod.min;
+            document.getElementById('lblMinMonto').textContent = abbreviate(prod.min);
+            document.getElementById('lblMaxMonto').textContent = abbreviate(prod.max);
+
+            const slPlazo = document.getElementById('inputPlazo');
+            slPlazo.min = prod.minP; slPlazo.max = prod.maxP; slPlazo.value = prod.minP;
+            document.getElementById('lblMinPlazo').textContent = prod.minP;
+            document.getElementById('lblMaxPlazo').textContent = prod.maxP;
+            document.getElementById('unitPlazo').textContent = prod.unit;
+
+            // Ajustar Labels de Resultado
+            const resLabel = document.getElementById('resultLabel');
+            const resSub = document.getElementById('resultSub');
+            const incomeInput = document.getElementById('incomeInputGroup');
+
+            if (prod.isGain) {
+                resLabel.textContent = "GANANCIA TOTAL ESTIMADA";
+                resSub.textContent = "Al finalizar el periodo";
+                incomeInput.classList.add('hidden'); // No necesitamos ingreso para ahorro
+                document.getElementById('modalIngreso').removeAttribute('required');
+            } else {
+                resLabel.textContent = "CUOTA MENSUAL ESTIMADA";
+                resSub.textContent = "Mensual aprox.";
+                incomeInput.classList.remove('hidden');
+                document.getElementById('modalIngreso').setAttribute('required', 'true');
+            }
+
+            calculate();
+        }
+
+        function calculate() {
+            const monto = parseFloat(document.getElementById('inputMonto').value);
+            const plazo = parseFloat(document.getElementById('inputPlazo').value);
+            const tasa = currentProd.tasas;
+
+            document.getElementById('displayMonto').textContent = money.format(monto);
+            document.getElementById('displayPlazo').textContent = plazo;
+
+            let result = 0;
+
+            if (currentProd.isGain) {
+                // Lógica Ganancia (DPF o Ahorro)
+                if (currentModule === 'DPF') {
+                    // Interés Simple: C * i * t/360
+                    result = monto * tasa * (plazo / 360);
+                } else {
+                    // Ahorro (Compuesto Mensual Referencial)
+                    // VF = VP * (1 + i/12)^n
+                    const vf = monto * Math.pow(1 + tasa/12, plazo);
+                    result = vf - monto;
+                }
+            } else {
+                // Lógica Crédito (Francesa)
+                // Cuota = C * (i * (1+i)^n) / ((1+i)^n - 1)
+                const i = tasa / 12;
+                result = monto * (i * Math.pow(1+i, plazo)) / (Math.pow(1+i, plazo) - 1);
+            }
+
+            currentCalculatedValue = result;
+            
+            // Animación de conteo simple
+            document.getElementById('resultValue').textContent = money.format(result);
+        }
+
+        // --- LEAD MODAL ---
+        function openLeadModal() {
+            const modal = document.getElementById('leadModal');
+            const backdrop = document.getElementById('modalBackdrop');
+            const content = document.getElementById('modalContent');
+            
+            // Setear resumen
+            const monto = document.getElementById('inputMonto').value;
+            document.getElementById('modalSummary').textContent = `${currentProd.name} por ${money.format(monto)} Bs`;
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                backdrop.classList.remove('opacity-0');
+                content.classList.remove('opacity-0', 'scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeLeadModal() {
+            const modal = document.getElementById('leadModal');
+            const backdrop = document.getElementById('modalBackdrop');
+            const content = document.getElementById('modalContent');
+            
+            backdrop.classList.add('opacity-0');
+            content.classList.remove('scale-100');
+            content.classList.add('opacity-0', 'scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        function checkCapacity() {
+            // Validar 40% capacidad
+            if(currentProd.isGain) return; // No aplica para ahorro
+
+            const ingreso = parseFloat(document.getElementById('modalIngreso').value) || 0;
+            const capacidad = ingreso * 0.40;
+            const msg = document.getElementById('capacityMsg');
+
+            if (ingreso > 0 && currentCalculatedValue > capacidad) {
+                msg.classList.remove('hidden');
+            } else {
+                msg.classList.add('hidden');
+            }
+        }
+
+        function submitLead() {
+            const btn = document.getElementById('btnSubmit');
+            const originalHTML = btn.innerHTML;
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+            btn.classList.add('opacity-75');
+
+            // Simulación AJAX
+            setTimeout(() => {
+                alert(`¡Gracias! Hemos recibido tu solicitud para ${currentProd.name}.`);
+                closeLeadModal();
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+                btn.classList.remove('opacity-75');
+                document.getElementById('leadForm').reset();
+            }, 1500);
+        }
+
+        function abbreviate(num) {
+            if (num >= 1000000) return (num/1000000) + 'M';
+            if (num >= 1000) return (num/1000) + 'k';
+            return num;
+        }
+
+    </script>
 </body>
 </html>
-
