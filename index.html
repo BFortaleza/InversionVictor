@@ -63,65 +63,65 @@
             background-attachment: fixed;
         }
         
-        /* --- SLIDERS CORREGIDOS --- */
-        input[type=range] { 
-            -webkit-appearance: none; /* Necesario para customizar */
-            width: 100%; 
-            background: transparent; /* Fondo transparente del input general */
-            margin: 10px 0;
-        }
+        /* --- SLIDERS ROBUSTOS (CORRECCIÓN VISUAL) --- */
         
-        /* La línea (Track) - Chrome/Safari/Edge */
+        /* Reset básico para el input */
+        input[type=range] {
+            -webkit-appearance: none; /* Elimina estilo por defecto */
+            width: 100%;
+            background: transparent; /* Fondo transparente contenedor */
+            height: 32px; /* Altura suficiente para el thumb */
+            margin: 0;
+            cursor: pointer;
+        }
+
+        /* ESTILO DE LA LÍNEA (TRACK) - CHROME/SAFARI/OPERA */
         input[type=range]::-webkit-slider-runnable-track {
-            width: 100%; 
-            height: 8px; 
-            background: #94A3B8; /* GRIS VISIBLE */
-            border-radius: 99px;
+            width: 100%;
+            height: 8px; /* Altura de la línea */
+            background: #CBD5E1; /* Gris visible (Slate-300) */
+            border-radius: 999px;
+            border: 1px solid #94A3B8; /* Borde sutil para asegurar contraste */
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-            cursor: pointer;
-            border: none;
         }
-        
-        /* La línea (Track) - Firefox */
+
+        /* ESTILO DE LA LÍNEA (TRACK) - FIREFOX */
         input[type=range]::-moz-range-track {
-            width: 100%; 
-            height: 8px; 
-            background: #94A3B8; /* GRIS VISIBLE */
-            border-radius: 99px;
+            width: 100%;
+            height: 8px;
+            background: #CBD5E1;
+            border-radius: 999px;
+            border: 1px solid #94A3B8;
             box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-            cursor: pointer;
-            border: none;
         }
 
-        /* El botón (Thumb) - Chrome/Safari/Edge */
+        /* ESTILO DE LA BOLA (THUMB) - CHROME/SAFARI */
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; 
-            height: 32px; 
-            width: 32px; 
+            -webkit-appearance: none;
+            height: 32px;
+            width: 32px;
             border-radius: 50%;
-            background: white; 
-            border: 4px solid #FF6B00; 
-            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.4); 
-            cursor: pointer; 
-            margin-top: -12px; /* Centrado vertical respecto al track de 8px: (8 - 32) / 2 = -12 */
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #FFFFFF;
+            border: 4px solid #FF6B00; /* Borde Naranja */
+            margin-top: -13px; /* (8px track - 32px thumb) / 2 - 1px border ajuste */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: transform 0.1s;
         }
 
-        /* El botón (Thumb) - Firefox */
+        /* ESTILO DE LA BOLA (THUMB) - FIREFOX */
         input[type=range]::-moz-range-thumb {
-            height: 32px; 
-            width: 32px; 
+            height: 32px;
+            width: 32px;
             border-radius: 50%;
-            background: white; 
-            border: 4px solid #FF6B00; 
-            box-shadow: 0 4px 10px rgba(255, 107, 0, 0.4); 
-            cursor: pointer; 
-            border: none; /* Reset border for firefox specific quirk */
-            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: #FFFFFF;
+            border: 4px solid #FF6B00;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.15);
+            transition: transform 0.1s;
         }
 
-        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.2); }
-        input[type=range]:hover::-moz-range-thumb { transform: scale(1.2); }
+        input[type=range]:hover::-webkit-slider-thumb { transform: scale(1.1); }
+        input[type=range]:hover::-moz-range-thumb { transform: scale(1.1); }
+        input[type=range]:focus { outline: none; }
 
         /* --- BOTONES --- */
         .module-btn { transition: all 0.3s ease; opacity: 0.7; transform: scale(0.98); }
@@ -171,7 +171,7 @@
     </header>
 
     <!-- CONTENEDOR PRINCIPAL -->
-    <main class="w-full max-w-5xl space-y-2"> <!-- Espacio muy reducido entre bloques -->
+    <main class="w-full max-w-5xl space-y-2">
 
         <!-- PASO 1: SELECTOR DE MÓDULOS -->
         <div class="grid grid-cols-3 gap-4 md:gap-6 mb-4">
@@ -191,7 +191,7 @@
 
             <button onclick="selectModule('DPF')" id="mod-DPF" class="module-btn p-5 rounded-[2rem] bg-white border border-slate-100 flex flex-col items-center gap-3 text-center group">
                 <div class="icon-container w-14 h-14 md:w-16 md:h-16 rounded-2xl bg-slate-50 text-brand-navy flex items-center justify-center text-2xl md:text-3xl transition-all duration-300">
-                    <i class="fa-solid fa-vault"></i>
+                    <i class="fa-solid fa-chart-line"></i>
                 </div>
                 <span class="font-display font-bold text-sm md:text-base text-brand-navy group-hover:text-brand-orange transition-colors">Inversión</span>
             </button>
@@ -199,7 +199,6 @@
 
         <!-- PASO 2: SELECTOR DE PRODUCTOS (PILLS CENTRADOS) -->
         <div class="relative animate-slide-down z-20 py-1">
-            <!-- Centrado con justify-center -->
             <div id="productsContainer" class="flex gap-3 overflow-x-auto hide-scrollbar p-2 justify-center">
                 <!-- Se llena con JS -->
             </div>
@@ -236,7 +235,8 @@
                             </div>
                         </div>
                         <div class="px-2">
-                            <input type="range" id="inputMonto" oninput="calculate()">
+                            <!-- STEP AÑADIDO: 100 -->
+                            <input type="range" id="inputMonto" step="100" oninput="calculate()">
                         </div>
                         <div class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1">
                             <span id="lblMinMonto">1k</span>
@@ -254,7 +254,7 @@
                             </div>
                         </div>
                         <div class="px-2">
-                            <input type="range" id="inputPlazo" oninput="calculate()">
+                            <input type="range" id="inputPlazo" step="1" oninput="calculate()">
                         </div>
                         <div class="flex justify-between text-xs font-semibold text-slate-400 mt-3 px-1">
                             <span id="lblMinPlazo">1</span>
@@ -316,17 +316,12 @@
 
     <!-- MODAL POPUP (LEAD FORM) -->
     <div id="leadModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4">
-        <!-- Backdrop -->
         <div class="absolute inset-0 bg-brand-navy/80 backdrop-blur-md transition-opacity opacity-0" id="modalBackdrop" onclick="closeLeadModal()"></div>
-        
-        <!-- Modal Content -->
         <div class="relative bg-white w-full max-w-md rounded-3xl shadow-2xl transform scale-95 opacity-0 transition-all duration-300 overflow-hidden" id="modalContent">
             
             <div class="bg-brand-navy p-8 text-white text-center relative overflow-hidden">
                 <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cube-coat.png')] opacity-10"></div>
-                
                 <button onclick="closeLeadModal()" class="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
-                
                 <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-brand-orange text-3xl mx-auto mb-4 backdrop-blur-sm border border-white/20 shadow-inner">
                     <i class="fa-regular fa-paper-plane"></i>
                 </div>
@@ -336,12 +331,10 @@
 
             <div class="p-8">
                 <form id="leadForm" onsubmit="event.preventDefault(); submitLead();" class="space-y-5">
-                    
                     <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 text-center">
                         <p class="text-[10px] text-slate-400 uppercase font-bold tracking-widest mb-1">INTERÉS EN</p>
                         <p class="font-bold text-brand-navy text-lg" id="modalSummary">...</p>
                     </div>
-
                     <div class="space-y-4">
                         <div class="relative">
                             <i class="fa-regular fa-user absolute left-4 top-4 text-slate-400"></i>
@@ -351,7 +344,6 @@
                             <i class="fa-solid fa-mobile-screen absolute left-4 top-4 text-slate-400"></i>
                             <input type="tel" required class="w-full pl-12 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20 outline-none transition-all placeholder-slate-300 text-brand-navy font-medium" placeholder="Celular / WhatsApp">
                         </div>
-                        
                         <!-- Ingreso para validar 40% -->
                         <div id="incomeInputGroup" class="relative">
                             <i class="fa-solid fa-wallet absolute left-4 top-4 text-slate-400"></i>
@@ -360,7 +352,6 @@
                         </div>
                         <p id="capacityMsg" class="text-xs text-red-500 mt-1 hidden text-center bg-red-50 p-2 rounded-lg border border-red-100"><i class="fa-solid fa-circle-exclamation mr-1"></i> Ingreso insuficiente para la cuota calculada.</p>
                     </div>
-
                     <button type="submit" id="btnSubmit" class="w-full py-4 bg-brand-navy hover:bg-brand-blue text-white font-bold rounded-xl shadow-lg transition-all mt-4">
                         ENVIAR SOLICITUD
                     </button>
@@ -369,44 +360,108 @@
         </div>
     </div>
 
-    <!-- DATA & LOGIC ENGINE -->
+    <!-- LOGIC ENGINE -->
     <script>
-        // BASE DE DATOS ACTUALIZADA V25.1
+        // DATOS ACTUALIZADOS V25.1
         const DATA = {
             CREDITO: [
-                { id: 'c_quiro', icon: 'fa-signature', name: 'Consumo Simple', desc: 'Sin garantía real. Firma personal.', min: 14000, max: 210000, minP: 1, maxP: 48, unit: 'meses', req: 'Carnet de Identidad, 3 últimas boletas de pago, Factura de luz.', tasas: 0.18 },
-                { id: 'c_personal', icon: 'fa-user-group', name: 'Con Garante', desc: 'Mejores condiciones con garante.', min: 14000, max: 210000, minP: 1, maxP: 60, unit: 'meses', req: 'CI solicitante y garante, Respaldo patrimonial garante.', tasas: 0.17 },
-                { id: 'c_vehicular', icon: 'fa-car', name: 'Vehicular', desc: 'Auto nuevo o usado.', min: 35000, max: 350000, minP: 12, maxP: 60, unit: 'meses', req: 'Proforma del vehículo, Aporte propio 10-20%.', tasas: 0.125 },
-                { id: 'c_vivienda', icon: 'fa-house-chimney', name: 'Vivienda', desc: 'Compra, construcción o mejora.', min: 140000, max: 3500000, minP: 60, maxP: 240, unit: 'meses', req: 'Avalúo del inmueble, Aporte propio 20%.', tasas: 0.10 }
+                { 
+                    id: 'c_quiro', icon: 'fa-signature', name: 'Consumo Libre', desc: 'A sola firma. Sin garantía real.', 
+                    min: 14000, max: 210000, minP: 6, maxP: 48, unit: 'meses', 
+                    req: 'CI vigente, Respaldo de ingresos, Boletas de pago.', 
+                    tasas: [ 
+                        { min: 14000, max: 35000, t36: 0.18, t48: 0.185 },
+                        { min: 35001, max: 70000, t36: 0.17, t48: 0.175 },
+                        { min: 70001, max: 105000, t36: 0.16, t48: 0.165 },
+                        { min: 105001, max: 140000, t36: 0.15, t48: 0.155 },
+                        { min: 140001, max: 175000, t36: 0.145, t48: 0.150 },
+                        { min: 175001, max: 210000, t36: 0.14, t48: 0.145 }
+                    ]
+                },
+                { 
+                    id: 'c_personal', icon: 'fa-user-group', name: 'Con Garante', desc: 'Respaldo con garante personal.', 
+                    min: 14000, max: 210000, minP: 6, maxP: 60, unit: 'meses', 
+                    req: 'CI y respaldo de ingresos (Solicitante y Garante).', 
+                    tasas: [
+                        { min: 14000, max: 35000, r: 0.17 },
+                        { min: 35001, max: 70000, r: 0.16 },
+                        { min: 70001, max: 105000, r: 0.15 },
+                        { min: 105001, max: 140000, r: 0.14 },
+                        { min: 140001, max: 175000, r: 0.135 },
+                        { min: 175001, max: 210000, r: 0.13 }
+                    ]
+                },
+                { 
+                    id: 'c_vehicular', icon: 'fa-car', name: 'Vehicular', desc: 'Auto nuevo 0Km.', 
+                    min: 35000, max: 350000, minP: 12, maxP: 60, unit: 'meses', 
+                    req: 'Proforma del vehículo, Aporte propio 10-20%.', 
+                    tasas: [
+                        { min: 35000, max: 70000, r: 0.145 },
+                        { min: 70001, max: 105000, r: 0.14 },
+                        { min: 105001, max: 140000, r: 0.135 },
+                        { min: 140001, max: 175000, r: 0.13 },
+                        { min: 175001, max: 210000, r: 0.1275 },
+                        { min: 210001, max: 999999, r: 0.125 }
+                    ]
+                },
+                { 
+                    id: 'c_vivienda', icon: 'fa-house-chimney', name: 'Vivienda', desc: 'Compra o construcción.', 
+                    min: 140000, max: 3500000, minP: 60, maxP: 240, unit: 'meses', 
+                    req: 'Avalúo del inmueble, Aporte propio.', 
+                    tasas: [
+                        { min: 140000, max: 210000, t180: 0.12, t240: 0.1225 },
+                        { min: 210001, max: 350000, t180: 0.115, t240: 0.1175 },
+                        { min: 350001, max: 490000, t180: 0.11, t240: 0.1125 },
+                        { min: 490001, max: 700000, t180: 0.105, t240: 0.1075 },
+                        { min: 700001, max: 1050000, t180: 0.1025, t240: 0.105 },
+                        { min: 1050001, max: 3500000, t180: 0.10, t240: 0.1025 }
+                    ]
+                }
             ],
             AHORRO: [
-                { id: 'a_agil', icon: 'fa-bolt', name: 'Fortaleza Ágil', desc: 'Tu dinero siempre disponible.', min: 1000, max: 1000000, minP: 1, maxP: 60, unit: 'meses', req: 'Solo CI vigente y monto de apertura.', tasas: 0.0425, isGain: true },
-                { id: 'a_crece', icon: 'fa-chart-line', name: 'Fortaleza Crece', desc: 'Gana más ahorrando más.', min: 5000, max: 1000000, minP: 1, maxP: 60, unit: 'meses', req: 'CI vigente, Monto apertura 5k.', tasas: 0.045, isGain: true }
+                { 
+                    id: 'a_agil', icon: 'fa-bolt', name: 'Fortaleza Ágil', desc: '4.25% anual. Retiros ilimitados.', 
+                    min: 1000, max: 1000000, minP: 6, maxP: 60, unit: 'meses', 
+                    req: 'Solo CI vigente y monto de apertura (Bs 1,000).', 
+                    tasas: 0.0425, isGain: true 
+                },
+                { 
+                    id: 'a_crece', icon: 'fa-chart-line', name: 'Fortaleza Crece', desc: 'Tasa preferencial por saldo.', 
+                    min: 5000, max: 1000000, minP: 6, maxP: 60, unit: 'meses', 
+                    req: 'Monto apertura Bs 5,000. Hasta 5 retiros al mes.', 
+                    tasas: [ {min: 0, max: 350000, r: 0.045}, {min: 350001, max: 9999999, r: 0.055} ], 
+                    isGain: true 
+                }
             ],
             DPF: [
-                { id: 'dpf_promo', icon: 'fa-certificate', name: 'DPF Promo', desc: 'Máxima rentabilidad a plazo.', min: 1000, max: 500000, minP: 180, maxP: 1440, unit: 'días', req: 'CI vigente. Tasas promocionales 2025.', tasas: 0.06, isGain: true }
+                { 
+                    id: 'dpf_escala', icon: 'fa-chart-bar', name: 'DPF Escala', desc: 'Hasta 6% según plazo (Días).', 
+                    min: 1000, max: 1000000, minP: 180, maxP: 1440, unit: 'días', 
+                    req: 'Monto mínimo Bs 1,000. CI vigente.', 
+                    tasas: [ 
+                        {min: 180, max: 360, r: 0.03}, 
+                        {min: 361, max: 539, r: 0.04}, 
+                        {min: 540, max: 720, r: 0.05}, 
+                        {min: 721, max: 9999, r: 0.06} 
+                    ], 
+                    isGain: true 
+                }
             ]
         };
 
         let currentModule = 'CREDITO';
         let currentProd = DATA.CREDITO[0];
-        let currentCalculatedValue = 0; // Cuota o Ganancia
+        let currentCalculatedValue = 0;
 
         const money = new Intl.NumberFormat('es-BO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
-        // INICIALIZAR
-        window.onload = () => {
-            selectModule('CREDITO');
-        };
+        window.onload = () => { selectModule('CREDITO'); };
 
         function selectModule(mod) {
             currentModule = mod;
-            
-            // Actualizar Botones Módulo
             document.querySelectorAll('.module-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(`mod-${mod}`).classList.add('active');
 
-            // Renderizar Pills de Productos
             const container = document.getElementById('productsContainer');
             container.innerHTML = '';
             
@@ -417,34 +472,27 @@
                 btn.innerHTML = `<i class="fa-solid ${prod.icon}"></i> ${prod.name}`;
                 container.appendChild(btn);
             });
-
-            // Seleccionar el primero por defecto
             selectProduct(DATA[mod][0]);
         }
 
         function selectProduct(prod, btnElement = null) {
             currentProd = prod;
-            
-            // Estilos de Pills
             if(btnElement) {
                 document.querySelectorAll('.product-pill').forEach(b => b.classList.remove('active'));
                 btnElement.classList.add('active');
             } else {
-                // Si viene de selectModule, buscamos el primero
                 const firstBtn = document.querySelector('.product-pill');
                 if(firstBtn) firstBtn.classList.add('active');
             }
 
-            // Actualizar UI Simulador
             document.getElementById('productTitle').textContent = prod.name;
             document.getElementById('productDesc').textContent = prod.desc;
             document.getElementById('productIcon').className = `fa-solid ${prod.icon} text-xl`;
             document.getElementById('requirementsText').textContent = prod.req;
-            document.getElementById('rateValue').textContent = (prod.tasas * 100).toFixed(2) + '% Anual';
 
-            // Configurar Sliders
             const slMonto = document.getElementById('inputMonto');
             slMonto.min = prod.min; slMonto.max = prod.max; slMonto.value = prod.min;
+            slMonto.step = 100; // Paso de 100 BS
             document.getElementById('lblMinMonto').textContent = abbreviate(prod.min);
             document.getElementById('lblMaxMonto').textContent = abbreviate(prod.max);
 
@@ -454,7 +502,6 @@
             document.getElementById('lblMaxPlazo').textContent = prod.maxP;
             document.getElementById('unitPlazo').textContent = prod.unit;
 
-            // Ajustar Labels de Resultado
             const resLabel = document.getElementById('resultLabel');
             const resSub = document.getElementById('resultSub');
             const incomeInput = document.getElementById('incomeInputGroup');
@@ -462,7 +509,7 @@
             if (prod.isGain) {
                 resLabel.textContent = "GANANCIA TOTAL ESTIMADA";
                 resSub.textContent = "Al finalizar el periodo";
-                incomeInput.classList.add('hidden'); // No necesitamos ingreso para ahorro
+                incomeInput.classList.add('hidden');
                 document.getElementById('modalIngreso').removeAttribute('required');
             } else {
                 resLabel.textContent = "CUOTA MENSUAL ESTIMADA";
@@ -470,54 +517,56 @@
                 incomeInput.classList.remove('hidden');
                 document.getElementById('modalIngreso').setAttribute('required', 'true');
             }
-
             calculate();
         }
 
         function calculate() {
             const monto = parseFloat(document.getElementById('inputMonto').value);
             const plazo = parseFloat(document.getElementById('inputPlazo').value);
-            const tasa = currentProd.tasas;
+            
+            // Determinar Tasa Dinámica
+            let tasa = 0;
+            if (Array.isArray(currentProd.tasas)) {
+                let criterio = (currentModule === 'DPF') ? plazo : monto;
+                const rango = currentProd.tasas.find(r => criterio >= r.min && criterio <= r.max);
+                
+                if (rango) {
+                    // Lógica especial para Créditos con doble columna de plazo
+                    if (rango.t36 && rango.t48) tasa = (plazo <= 36) ? rango.t36 : rango.t48;
+                    else if (rango.t180 && rango.t240) tasa = (plazo <= 180) ? rango.t180 : rango.t240;
+                    else tasa = rango.r;
+                }
+            } else {
+                tasa = currentProd.tasas;
+            }
 
             document.getElementById('displayMonto').textContent = money.format(monto);
             document.getElementById('displayPlazo').textContent = plazo;
+            document.getElementById('rateValue').textContent = (tasa * 100).toFixed(2) + '% Anual';
 
             let result = 0;
-
             if (currentProd.isGain) {
-                // Lógica Ganancia (DPF o Ahorro)
                 if (currentModule === 'DPF') {
-                    // Interés Simple: C * i * t/360
                     result = monto * tasa * (plazo / 360);
                 } else {
-                    // Ahorro (Compuesto Mensual Referencial)
-                    // VF = VP * (1 + i/12)^n
                     const vf = monto * Math.pow(1 + tasa/12, plazo);
                     result = vf - monto;
                 }
             } else {
-                // Lógica Crédito (Francesa)
-                // Cuota = C * (i * (1+i)^n) / ((1+i)^n - 1)
                 const i = tasa / 12;
                 result = monto * (i * Math.pow(1+i, plazo)) / (Math.pow(1+i, plazo) - 1);
             }
 
             currentCalculatedValue = result;
-            
-            // Animación de conteo simple
             document.getElementById('resultValue').textContent = money.format(result);
         }
 
-        // --- LEAD MODAL ---
         function openLeadModal() {
             const modal = document.getElementById('leadModal');
             const backdrop = document.getElementById('modalBackdrop');
             const content = document.getElementById('modalContent');
-            
-            // Setear resumen
             const monto = document.getElementById('inputMonto').value;
             document.getElementById('modalSummary').textContent = `${currentProd.name} por ${money.format(monto)} Bs`;
-
             modal.classList.remove('hidden');
             setTimeout(() => {
                 backdrop.classList.remove('opacity-0');
@@ -530,46 +579,31 @@
             const modal = document.getElementById('leadModal');
             const backdrop = document.getElementById('modalBackdrop');
             const content = document.getElementById('modalContent');
-            
             backdrop.classList.add('opacity-0');
             content.classList.remove('scale-100');
             content.classList.add('opacity-0', 'scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
         function checkCapacity() {
-            // Validar 40% capacidad
-            if(currentProd.isGain) return; // No aplica para ahorro
-
+            if(currentProd.isGain) return;
             const ingreso = parseFloat(document.getElementById('modalIngreso').value) || 0;
-            const capacidad = ingreso * 0.40;
+            const capacidad = ingreso * 0.40; 
             const msg = document.getElementById('capacityMsg');
-
-            if (ingreso > 0 && currentCalculatedValue > capacidad) {
-                msg.classList.remove('hidden');
-            } else {
-                msg.classList.add('hidden');
-            }
+            if (ingreso > 0 && currentCalculatedValue > capacidad) msg.classList.remove('hidden');
+            else msg.classList.add('hidden');
         }
 
         function submitLead() {
             const btn = document.getElementById('btnSubmit');
             const originalHTML = btn.innerHTML;
-            
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
-            btn.classList.add('opacity-75');
-
-            // Simulación AJAX
             setTimeout(() => {
                 alert(`¡Gracias! Hemos recibido tu solicitud para ${currentProd.name}.`);
                 closeLeadModal();
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
-                btn.classList.remove('opacity-75');
                 document.getElementById('leadForm').reset();
             }, 1500);
         }
@@ -579,7 +613,6 @@
             if (num >= 1000) return (num/1000) + 'k';
             return num;
         }
-
     </script>
 </body>
 </html>
