@@ -131,6 +131,48 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
+
+        /* Estilo para el input de monto manual */
+        .monto-input-wrapper { position: relative; display: flex; align-items: center; }
+        .monto-input {
+            width: 100%;
+            background: transparent;
+            border-bottom: 2px solid #E2E8F0;
+            color: #002855;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 2.5rem;
+            padding: 0.5rem 60px 0.5rem 0; /* Espacio para las flechas */
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+        .monto-input:focus { border-color: #FF6B00; }
+        @media (min-width: 768px) {
+            .monto-input { font-size: 3rem; }
+        }
+
+        /* Botones de incremento/decremento */
+        .monto-arrows {
+            position: absolute;
+            right: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .monto-arrow-btn {
+            background: #F1F5F9;
+            color: #002855;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+        .monto-arrow-btn:hover { background: #002855; color: white; }
+        .monto-arrow-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body class="antialiased text-slate-700 pb-10 md:pb-20">
@@ -172,57 +214,61 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 items-start">
             
-            <!-- INPUTS -->
-            <div class="lg:col-span-5 space-y-8 md:space-y-10 bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border border-slate-50 shadow-xl">
+            <!-- CONTENEDOR LATERAL (INPUTS) -->
+            <div class="lg:col-span-5 space-y-6 md:space-y-8">
                 
-                <div>
-                    <div class="flex justify-between items-end mb-4">
-                        <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Capital</label>
-                        <div class="flex items-baseline gap-1">
-                            <span id="display-monto" class="text-4xl md:text-5xl font-display font-bold text-brand-navy tracking-tighter">0</span>
+                <!-- BLOQUE 1: CONFIGURACIÓN DE DATOS -->
+                <div class="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border border-slate-50 shadow-xl space-y-8">
+                    
+                    <!-- Entrada Manual: Capital con Flechas -->
+                    <div>
+                        <div class="flex justify-between items-end mb-2">
+                            <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Capital a Proyectar</label>
                             <span class="text-lg font-black text-brand-orange">Bs</span>
                         </div>
-                    </div>
-                    <input type="range" id="slider-monto" min="0" value="0" class="slider-premium" oninput="updateCalculations()">
-                    <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-3 uppercase">
-                        <span id="min-monto-label">1,000 Bs</span>
-                        <span id="max-monto-label">10M Bs</span>
-                    </div>
-                </div>
-
-                <div>
-                    <div class="flex justify-between items-end mb-4">
-                        <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Plazo</label>
-                        <div class="flex items-baseline gap-1">
-                            <span id="display-plazo" class="text-4xl md:text-5xl font-display font-bold text-brand-navy tracking-tighter">0</span>
-                            <span id="unit-label" class="text-lg font-black text-brand-orange uppercase">días</span>
+                        <div class="monto-input-wrapper">
+                            <input type="text" id="input-monto" 
+                                   class="monto-input tracking-tighter" 
+                                   placeholder="0"
+                                   oninput="formatMontoInput(this)">
+                            <div class="monto-arrows">
+                                <button onclick="stepMonto(1000)" class="monto-arrow-btn"><i class="fa-solid fa-chevron-up"></i></button>
+                                <button onclick="stepMonto(-1000)" class="monto-arrow-btn"><i class="fa-solid fa-chevron-down"></i></button>
+                            </div>
+                        </div>
+                        <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-2 uppercase">
+                            <span id="min-monto-label">1.000 Bs</span>
+                            <span id="max-monto-label">10M Bs</span>
                         </div>
                     </div>
-                    <input type="range" id="slider-plazo" class="slider-premium" oninput="updateCalculations()">
-                    <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-3 uppercase">
-                        <span id="min-plazo-label">90</span>
-                        <span id="max-plazo-label">1,080</span>
+
+                    <!-- Slider: Plazo -->
+                    <div>
+                        <div class="flex justify-between items-end mb-4">
+                            <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Plazo del Plan</label>
+                            <div class="flex items-baseline gap-1">
+                                <span id="display-plazo" class="text-4xl md:text-5xl font-display font-bold text-brand-navy tracking-tighter">0</span>
+                                <span id="unit-label" class="text-lg font-black text-brand-orange uppercase">días</span>
+                            </div>
+                        </div>
+                        <input type="range" id="slider-plazo" class="slider-premium" oninput="updateCalculations()">
+                        <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-3 uppercase">
+                            <span id="min-plazo-label">90</span>
+                            <span id="max-plazo-label">1.080</span>
+                        </div>
                     </div>
                 </div>
 
-                <div class="pt-4 space-y-4">
-                    <button onclick="openLeadModal()" class="btn-shine w-full py-4 md:py-5 bg-brand-navy text-white font-bold rounded-2xl hover:bg-brand-blue transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-xl active:scale-95">
-                        <i class="fa-solid fa-crown text-brand-orange"></i> QUIERO MI PLAN
-                    </button>
-                    <button onclick="sendWhatsApp()" class="w-full py-4 border-2 border-emerald-500 text-emerald-600 font-bold rounded-2xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 text-sm">
-                        <i class="fa-brands fa-whatsapp text-2xl"></i> CONSULTAR POR WHATSAPP
-                    </button>
-
-                    <div id="product-requirements" class="pt-2 px-1">
-                        <h4 class="text-[8px] font-black text-brand-navy uppercase tracking-widest mb-2 border-b border-slate-100 pb-1">Condiciones del Plan</h4>
-                        <ul id="req-list" class="space-y-1.5"></ul>
-                    </div>
+                <!-- BLOQUE ACCIONES ESCRITORIO (Visible solo en LG) -->
+                <div class="hidden lg:block bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border border-slate-50 shadow-xl space-y-6" id="actions-desktop">
+                    <!-- Contenido inyectado dinámicamente -->
                 </div>
             </div>
 
             <!-- RESULTADOS -->
             <div class="lg:col-span-7 space-y-6 md:space-y-8">
                 
+                <!-- CARD PRINCIPAL -->
                 <div class="glass-dark rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 text-white relative shadow-2xl overflow-hidden border border-white/5">
                     <div class="relative z-10">
                         <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-10">
@@ -240,15 +286,25 @@
                             </div>
                         </div>
 
-                        <div id="secondary-result" class="grid grid-cols-2 gap-6 border-t border-white/10 pt-8"></div>
+                        <div id="secondary-result" class="grid grid-cols-2 gap-6 border-t border-white/10 pt-8">
+                            <!-- JS Injection -->
+                        </div>
                     </div>
                 </div>
 
+                <!-- PERSPECTIVAS -->
                 <div class="px-2">
                     <h3 class="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
                         <span class="w-8 h-[1px] bg-slate-200"></span> PROYECCIÓN EN OTROS TIEMPOS
                     </h3>
-                    <div id="perspective-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    <div id="perspective-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JS Cards -->
+                    </div>
+                </div>
+
+                <!-- BLOQUE ACCIONES MÓVIL (Visible solo debajo de LG) -->
+                <div class="lg:hidden bg-white p-6 rounded-[2.5rem] border border-slate-50 shadow-xl space-y-6 mb-10" id="actions-mobile">
+                    <!-- Contenido inyectado dinámicamente -->
                 </div>
 
             </div>
@@ -327,7 +383,6 @@
             ]
         };
 
-        const T1 = 15000, T2 = 100000, S1 = 50, S2 = 500, S3 = 10000;
         let activeMode = 'DPF', activeProduct = CONFIG.DPF[0];
         const formatter = new Intl.NumberFormat('es-BO', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 
@@ -335,6 +390,37 @@
             const el = document.getElementById('custom-alert');
             el.innerText = text; el.style.display = 'block';
             setTimeout(() => { el.style.display = 'none'; }, 4000);
+        }
+
+        // Lógica de formateo manual del monto con puntos
+        function formatMontoInput(input) {
+            let value = input.value.replace(/\D/g, ""); 
+            if (value !== "") {
+                let numericValue = parseInt(value, 10);
+                if (numericValue > activeProduct.max) numericValue = activeProduct.max;
+                input.value = formatter.format(numericValue);
+            } else {
+                input.value = "";
+            }
+            updateCalculations();
+        }
+
+        // Función para subir/bajar de 1000 en 1000
+        function stepMonto(delta) {
+            let current = getMontoNumeric();
+            let next = current + delta;
+            
+            // Validar límites
+            if (next < activeProduct.min) next = activeProduct.min;
+            if (next > activeProduct.max) next = activeProduct.max;
+            
+            document.getElementById('input-monto').value = formatter.format(next);
+            updateCalculations();
+        }
+
+        function getMontoNumeric() {
+            const val = document.getElementById('input-monto').value.replace(/\D/g, "");
+            return val === "" ? activeProduct.min : parseInt(val, 10);
         }
 
         function changeMode(mode) {
@@ -362,33 +448,48 @@
             setProduct(CONFIG[activeMode][0]);
         }
 
-        function getAmountFromSteps(steps, product) {
-            const stepsT1 = Math.max(0, (T1 - product.min) / S1), stepsT2 = (T2 - T1) / S2;
-            if (steps <= stepsT1) return product.min + (steps * S1);
-            if (steps <= (stepsT1 + stepsT2)) return T1 + ((steps - stepsT1) * S2);
-            return T2 + ((steps - stepsT1 - stepsT2) * S3);
-        }
-
         function setProduct(prod) {
             activeProduct = prod;
-            const sm = document.getElementById('slider-monto'), sp = document.getElementById('slider-plazo');
-            const stepsT1 = Math.max(0, (T1 - prod.min) / S1), stepsT2 = (T2 - T1) / S2;
-            const stepsT3 = Math.max(0, (prod.max - Math.max(prod.min, T2)) / S3);
-            sm.max = stepsT1 + stepsT2 + stepsT3; sm.value = 0;
+            const inputMonto = document.getElementById('input-monto');
+            const sp = document.getElementById('slider-plazo');
+            
+            inputMonto.value = formatter.format(prod.min);
             sp.min = prod.minP; sp.max = prod.maxP; sp.value = prod.minP; sp.step = prod.stepTime;
+            
             document.getElementById('min-monto-label').innerText = formatter.format(prod.min) + " Bs";
             document.getElementById('max-monto-label').innerText = formatter.format(prod.max) + " Bs";
             document.getElementById('min-plazo-label').innerText = prod.minP;
             document.getElementById('max-plazo-label').innerText = prod.maxP;
             document.getElementById('unit-label').innerText = prod.unit;
-            const reqList = document.getElementById('req-list'); reqList.innerHTML = '';
-            prod.req.forEach(item => {
-                const li = document.createElement('li');
-                li.className = "text-[10px] text-slate-900 leading-tight font-medium flex items-start gap-2";
-                li.innerHTML = `<i class="fa-solid fa-circle-check text-brand-orange mt-0.5 text-[8px]"></i> <span>${item}</span>`;
-                reqList.appendChild(li);
-            });
+            
+            renderActionBlocks(prod);
             updateCalculations();
+        }
+
+        // Renderizar bloques de acción en ambos contenedores (uno se oculta por CSS)
+        function renderActionBlocks(prod) {
+            const content = `
+                <div class="space-y-4">
+                    <button onclick="openLeadModal()" class="btn-shine w-full py-4 md:py-5 bg-brand-navy text-white font-bold rounded-2xl hover:bg-brand-blue transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-xl active:scale-95">
+                        <i class="fa-solid fa-crown text-brand-orange"></i> QUIERO MI PLAN
+                    </button>
+                    <button onclick="sendWhatsApp()" class="w-full py-4 border-2 border-emerald-500 text-emerald-600 font-bold rounded-2xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i> CONSULTAR POR WHATSAPP
+                    </button>
+                </div>
+                <div class="pt-2">
+                    <h4 class="text-[8px] font-black text-brand-navy uppercase tracking-widest mb-2 border-b border-slate-100 pb-1">Condiciones del Plan</h4>
+                    <ul class="space-y-1.5">
+                        ${prod.req.map(item => `
+                            <li class="text-[10px] text-slate-900 leading-tight font-medium flex items-start gap-2">
+                                <i class="fa-solid fa-circle-check text-brand-orange mt-0.5 text-[8px]"></i> <span>${item}</span>
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+            `;
+            document.getElementById('actions-desktop').innerHTML = content;
+            document.getElementById('actions-mobile').innerHTML = content;
         }
 
         function getTasa(monto, plazo) {
@@ -429,15 +530,17 @@
         }
 
         function updateCalculations() {
-            const steps = parseInt(document.getElementById('slider-monto').value);
-            const m = getAmountFromSteps(steps, activeProduct), p = parseFloat(document.getElementById('slider-plazo').value);
+            const m = getMontoNumeric();
+            const p = parseFloat(document.getElementById('slider-plazo').value);
             const t = getTasa(m, p);
-            document.getElementById('display-monto').innerText = formatter.format(m);
+            
             document.getElementById('display-plazo').innerText = p;
             document.getElementById('rate-badge').innerText = `${(t*100).toFixed(2)}%`;
+            
             const res = calculateResults(m, p, t);
             document.getElementById('main-result-value').innerText = formatter.format(res);
             const infoBox = document.getElementById('secondary-result');
+            
             if (activeMode !== 'CREDITO') {
                 document.getElementById('main-result-label').innerText = "GANANCIA ESTIMADA";
                 infoBox.innerHTML = `
@@ -486,7 +589,7 @@
         }
 
         function openLeadModal() { 
-            const m = getAmountFromSteps(parseInt(document.getElementById('slider-monto').value), activeProduct);
+            const m = getMontoNumeric();
             document.getElementById('modal-summary-prod').innerText = `${activeProduct.prefix} ${activeProduct.name}`;
             document.getElementById('modal-summary-monto').innerText = formatter.format(m) + " Bs";
             document.getElementById('modal-summary-label').innerText = activeMode === 'CREDITO' ? "Monto Solicitado" : "Monto a Invertir";
@@ -501,9 +604,8 @@
             showMessage(`¡Excelente ${name} de ${city}! Solicitud enviada correctamente.`); closeLeadModal();
         }
 
-        // FUNCIÓN ACTUALIZADA: Mensaje de WhatsApp formal y profesional
         function sendWhatsApp() {
-            const monto = document.getElementById('display-monto').innerText;
+            const monto = formatter.format(getMontoNumeric());
             const plazo = document.getElementById('display-plazo').innerText;
             const res = document.getElementById('main-result-value').innerText;
             const resLabel = document.getElementById('main-result-label').innerText;
