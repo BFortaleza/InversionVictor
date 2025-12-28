@@ -21,14 +21,14 @@
                     },
                     animation: {
                         'bar-down': 'barDown 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards',
-                        'logo-fade': 'logoFade 1.2s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards',
-                        'text-reveal': 'textReveal 0.8s ease-out 1s forwards',
+                        'logo-fade': 'logoFade 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards',
+                        'text-reveal': 'textReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1s forwards',
                         'sweep-shine': 'sweepShine 4s linear infinite'
                     },
                     keyframes: {
                         barDown: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(0)' } },
-                        logoFade: { '0%': { opacity: '0', transform: 'scale(0.98) translateY(0)' }, '100%': { opacity: '1', transform: 'scale(1) translateY(0)' } },
-                        textReveal: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+                        logoFade: { '0%': { opacity: '0', transform: 'scale(0.99) translateY(0)' }, '100%': { opacity: '1', transform: 'scale(1) translateY(0)' } },
+                        textReveal: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
                         sweepShine: { '0%': { left: '-100%' }, '30%': { left: '100%' }, '100%': { left: '100%' } }
                     }
                 }
@@ -63,48 +63,56 @@
 
         .glass-dark {
             background: linear-gradient(145deg, #002855 0%, #001228 100%);
-            box-shadow: 0 40px 80px -20px rgba(0, 15, 40, 0.6);
+            box-shadow: 0 30px 60px -12px rgba(0, 15, 40, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .hover-grow { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2); }
-        .hover-grow:hover { transform: scale(1.04); }
+        .hover-grow { transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1); }
+        .hover-grow:hover { transform: translateY(-3px); }
 
-        .glow-main { transition: all 0.4s ease; cursor: default; }
-        .glow-main:hover { transform: scale(1.02); }
+        .glow-main { transition: all 0.5s ease; cursor: default; }
+        .glow-main:hover { transform: scale(1.01); }
         .glow-main:hover span {
             color: #FFFFFF !important;
-            text-shadow: 0 0 25px rgba(255, 255, 255, 0.4);
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         }
-        .glow-main span { transition: all 0.4s ease; display: inline-block; }
+        .glow-main span { transition: all 0.5s ease; display: inline-block; }
 
-        .slider-premium { -webkit-appearance: none; width: 100%; height: 5px; background: #E2E8F0; border-radius: 999px; outline: none; }
+        .slider-premium { -webkit-appearance: none; width: 100%; height: 4px; background: #E2E8F0; border-radius: 999px; outline: none; }
         .slider-premium::-webkit-slider-thumb { 
-            -webkit-appearance: none; width: 28px; height: 28px; 
+            -webkit-appearance: none; width: 24px; height: 24px; 
             background: #FF6B00; border-radius: 50%; cursor: pointer; 
-            border: 4px solid white; box-shadow: 0 4px 15px rgba(0,0,0,0.15); 
-            transition: transform 0.2s ease;
+            border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); 
+            transition: all 0.3s ease;
         }
+        .slider-premium::-webkit-slider-thumb:hover { transform: scale(1.1); }
         
-        .module-btn { transition: all 0.3s ease; background: #002855; color: #FFFFFF; border: none; }
-        .module-btn:hover { transform: translateY(-2px); background: #003a7a; }
-        .module-btn.active-tab { background: #FF6B00 !important; color: white !important; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3); border-color: #002855 !important; }
+        .module-btn { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); background: #002855; color: #FFFFFF; border: none; }
+        .module-btn:hover { transform: translateY(-2px); background: #003a7a; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .module-btn.active-tab { background: #FF6B00 !important; color: white !important; box-shadow: 0 10px 20px rgba(255, 107, 0, 0.25); }
 
-        /* Ajuste de padding y line-height corregido para evitar cortes */
-        .product-pill { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid #E2E8F0; background: white; color: #64748B; line-height: 1.6; display: flex; items-center: center; justify-content: center; }
-        .product-pill:hover { transform: scale(1.05); border-color: #002855; color: #002855; }
-        .product-pill.active { background: #002855 !important; color: white !important; border-color: #002855 !important; }
+        .product-pill { 
+            transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); 
+            border: 1px solid #E2E8F0; 
+            background: white; 
+            color: #64748B; 
+            line-height: 1.2; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            position: relative;
+        }
+        .product-pill:hover { transform: translateY(-2px); border-color: #002855; color: #002855; box-shadow: 0 8px 15px rgba(0,0,0,0.05); }
+        .product-pill.active { background: #002855 !important; color: white !important; border-color: #002855 !important; box-shadow: 0 8px 15px rgba(0,40,85,0.2); }
 
-        .card-pro { transition: all 0.4s ease; border: 1px solid #F1F5F9; background: white; }
-        .card-pro:hover { transform: translateY(-8px); border-color: #FF6B00; box-shadow: 0 20px 40px -15px rgba(0,0,0,0.08); }
-        .card-pro .num-block { transition: all 0.3s; display: inline-block; }
-        .card-pro:hover .num-block { transform: scale(1.05); color: #002855 !important; }
+        .card-pro { transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1); border: 1px solid #F1F5F9; background: white; }
+        .card-pro:hover { transform: translateY(-5px); border-color: #FF6B00; box-shadow: 0 15px 30px rgba(0,0,0,0.05); }
 
         .btn-shine { position: relative; overflow: hidden; }
-        .btn-shine::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent); transform: rotate(45deg); animation: shine 5s infinite; }
+        .btn-shine::after { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(255,255,255,0.15), transparent); transform: rotate(45deg); animation: shine 6s infinite; }
         @keyframes shine { 0% { left: -100%; } 100% { left: 100%; } }
 
-        .modal-overlay { backdrop-filter: blur(15px); background: rgba(0, 15, 40, 0.85); }
+        .modal-overlay { backdrop-filter: blur(8px); background: rgba(0, 10, 30, 0.6); }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
 
         #custom-alert {
@@ -116,10 +124,12 @@
             z-index: 200;
             background: #002855;
             color: white;
-            padding: 1rem 2rem;
-            border-radius: 1rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
             border: 1px solid #FF6B00;
+            font-weight: 600;
+            font-size: 0.9rem;
         }
     </style>
 </head>
@@ -127,121 +137,126 @@
 
     <div id="custom-alert"></div>
 
-    <!-- CABECERA PREMIUM -->
+    <!-- CABECERA -->
     <div class="blue-franja animate-bar-down">
         <div class="franja-shine animate-sweep-shine"></div>
     </div>
     
     <header class="relative z-10 text-center">
         <div class="h-[110px] flex items-center justify-center opacity-0 animate-logo-fade">
-             <!-- Logo con transición suave corregida -->
-             <img src="https://i.ibb.co/8yB0N1b/logo-blanco.png" alt="Banco Fortaleza" class="h-12 md:h-16 drop-shadow-xl transition-all duration-700 ease-in-out hover:scale-105 cursor-pointer">
+             <img src="https://i.ibb.co/8yB0N1b/logo-blanco.png" alt="Banco Fortaleza" class="h-10 md:h-14 drop-shadow-xl transition-all duration-1000 ease-in-out hover:scale-105 cursor-pointer">
         </div>
-        <div class="pt-6 md:pt-10 pb-6 md:pb-8 px-4 opacity-0 animate-text-reveal">
-            <h1 class="text-3xl md:text-6xl font-display font-bold text-brand-navy tracking-tighter mb-2 md:mb-4 italic hover-grow cursor-default">¡Donde tú estás primero!</h1>
-            <p class="text-slate-400 font-bold text-[10px] md:text-xs uppercase tracking-[0.2em] md:tracking-[0.4em]">Calcula tu DPF, Cajas de Ahorro y Créditos con precisión</p>
+        <div class="pt-6 md:pt-10 pb-4 md:pb-6 px-4 opacity-0 animate-text-reveal">
+            <h1 class="text-3xl md:text-5xl font-display font-bold text-brand-navy tracking-tighter mb-2 italic hover-grow cursor-default transition-all duration-700">¡Donde tú estás primero!</h1>
+            <p class="text-slate-400 font-bold text-[9px] md:text-xs uppercase tracking-[0.3em]">Proyecciones Financieras con Inteligencia</p>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-4 relative z-20">
         
-        <!-- SELECTOR DE MÓDULO -->
+        <!-- SELECTOR MÓDULO -->
         <div class="flex flex-wrap justify-center gap-2 md:gap-4 mb-8 md:mb-10">
-            <button onclick="changeMode('DPF')" id="btn-DPF" class="module-btn flex items-center gap-2 md:gap-3 px-6 md:px-12 py-3 md:py-4 rounded-xl md:rounded-2xl font-bold active-tab text-sm md:text-base">
+            <button onclick="changeMode('DPF')" id="btn-DPF" class="module-btn flex items-center gap-2 md:gap-3 px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold active-tab text-sm md:text-base">
                 <i class="fa-solid fa-chart-line"></i> DPF
             </button>
-            <button onclick="changeMode('AHORRO')" id="btn-AHORRO" class="module-btn flex items-center gap-2 md:gap-3 px-6 md:px-12 py-3 md:py-4 rounded-xl md:rounded-2xl font-bold text-sm md:text-base">
+            <button onclick="changeMode('AHORRO')" id="btn-AHORRO" class="module-btn flex items-center gap-2 md:gap-3 px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base">
                 <i class="fa-solid fa-piggy-bank"></i> Ahorro
             </button>
-            <button onclick="changeMode('CREDITO')" id="btn-CREDITO" class="module-btn flex items-center gap-2 md:gap-3 px-6 md:px-12 py-3 md:py-4 rounded-xl md:rounded-2xl font-bold text-sm md:text-base">
+            <button onclick="changeMode('CREDITO')" id="btn-CREDITO" class="module-btn flex items-center gap-2 md:gap-3 px-6 md:px-10 py-3 md:py-4 rounded-xl font-bold text-sm md:text-base">
                 <i class="fa-solid fa-hand-holding-dollar"></i> Créditos
             </button>
         </div>
 
-        <!-- PRODUCTOS: Ajustado con padding vertical para evitar cortes en hover -->
-        <div id="product-selectors" class="flex flex-nowrap md:flex-wrap justify-start md:justify-center gap-2 mb-8 md:mb-12 overflow-x-auto py-2 md:py-4 hide-scrollbar"></div>
+        <!-- PRODUCTOS -->
+        <div id="product-selectors" class="flex flex-nowrap md:flex-wrap justify-start md:justify-center gap-2 mb-8 md:mb-10 overflow-x-auto py-3 md:py-4 hide-scrollbar px-2"></div>
 
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10 items-start">
             
-            <!-- ÁREA DE INPUTS -->
-            <div class="lg:col-span-5 space-y-8 md:space-y-12 bg-white p-6 md:p-12 rounded-[2.5rem] md:rounded-[3.5rem] border border-slate-50 shadow-xl">
+            <!-- INPUTS -->
+            <div class="lg:col-span-5 space-y-8 md:space-y-10 bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border border-slate-50 shadow-xl">
                 
-                <!-- Slider: Monto -->
                 <div>
-                    <div class="flex justify-between items-end mb-4 md:mb-8">
-                        <label class="text-[9px] md:text-[10px] font-black text-slate-300 uppercase tracking-widest">Capital a Proyectar</label>
+                    <div class="flex justify-between items-end mb-4">
+                        <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Capital</label>
                         <div class="flex items-baseline gap-1">
-                            <span id="display-monto" class="text-4xl md:text-6xl font-display font-bold text-brand-navy tracking-tighter">0</span>
-                            <span class="text-xl md:text-2xl font-black text-brand-orange">Bs</span>
+                            <span id="display-monto" class="text-4xl md:text-5xl font-display font-bold text-brand-navy tracking-tighter">0</span>
+                            <span class="text-lg font-black text-brand-orange">Bs</span>
                         </div>
                     </div>
                     <input type="range" id="slider-monto" min="0" value="0" class="slider-premium" oninput="updateCalculations()">
-                    <div class="flex justify-between text-[9px] md:text-[10px] font-bold text-slate-300 mt-4 uppercase">
+                    <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-3 uppercase">
                         <span id="min-monto-label">1,000 Bs</span>
                         <span id="max-monto-label">10M Bs</span>
                     </div>
                 </div>
 
-                <!-- Slider: Plazo -->
                 <div>
-                    <div class="flex justify-between items-end mb-4 md:mb-8">
-                        <label class="text-[9px] md:text-[10px] font-black text-slate-300 uppercase tracking-widest">Plazo del Plan</label>
+                    <div class="flex justify-between items-end mb-4">
+                        <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Plazo</label>
                         <div class="flex items-baseline gap-1">
-                            <span id="display-plazo" class="text-4xl md:text-6xl font-display font-bold text-brand-navy tracking-tighter">0</span>
-                            <span id="unit-label" class="text-xl md:text-2xl font-black text-brand-orange uppercase">días</span>
+                            <span id="display-plazo" class="text-4xl md:text-5xl font-display font-bold text-brand-navy tracking-tighter">0</span>
+                            <span id="unit-label" class="text-lg font-black text-brand-orange uppercase">días</span>
                         </div>
                     </div>
                     <input type="range" id="slider-plazo" class="slider-premium" oninput="updateCalculations()">
-                    <div class="flex justify-between text-[9px] md:text-[10px] font-bold text-slate-300 mt-4 uppercase">
+                    <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-3 uppercase">
                         <span id="min-plazo-label">90</span>
                         <span id="max-plazo-label">1,080</span>
                     </div>
                 </div>
 
-                <div class="pt-4 md:pt-6 space-y-4">
-                    <button onclick="openLeadModal()" class="btn-shine w-full py-4 md:py-6 bg-brand-navy text-white font-bold rounded-2xl md:rounded-3xl hover:bg-brand-blue transition-all flex items-center justify-center gap-3 md:gap-4 text-lg md:text-xl shadow-2xl active:scale-95">
+                <div class="pt-4 space-y-4">
+                    <button onclick="openLeadModal()" class="btn-shine w-full py-4 md:py-5 bg-brand-navy text-white font-bold rounded-2xl hover:bg-brand-blue transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-xl active:scale-95">
                         <i class="fa-solid fa-crown text-brand-orange"></i> QUIERO MI PLAN
                     </button>
-                    <button onclick="sendWhatsApp()" class="w-full py-4 md:py-5 border-2 border-emerald-500 text-emerald-600 font-bold rounded-2xl md:rounded-3xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 md:gap-3 text-sm md:text-base overflow-hidden">
-                        <i class="fa-brands fa-whatsapp text-2xl md:text-3xl flex-shrink-0"></i> <span class="whitespace-nowrap">CONSULTAR POR WHATSAPP</span>
+                    <button onclick="sendWhatsApp()" class="w-full py-4 border-2 border-emerald-500 text-emerald-600 font-bold rounded-2xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 text-sm">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i> CONSULTAR POR WHATSAPP
                     </button>
+
+                    <!-- REQUISITOS (DINÁMICO CON PUNTEOS) -->
+                    <div id="product-requirements" class="pt-2 px-1">
+                        <h4 class="text-[8px] font-black text-brand-navy uppercase tracking-widest mb-2 border-b border-slate-100 pb-1">Condiciones del Plan</h4>
+                        <ul id="req-list" class="space-y-1.5">
+                            <!-- Inyectado por JS -->
+                        </ul>
+                    </div>
                 </div>
             </div>
 
             <!-- RESULTADOS -->
-            <div class="lg:col-span-7 space-y-6 md:space-y-10">
+            <div class="lg:col-span-7 space-y-6 md:space-y-8">
                 
-                <!-- CARD PRINCIPAL PREMIUM -->
-                <div class="glass-dark rounded-[2.5rem] md:rounded-[4rem] p-8 md:p-14 text-white relative shadow-2xl overflow-hidden border border-white/5">
+                <!-- CARD PRINCIPAL -->
+                <div class="glass-dark rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 text-white relative shadow-2xl overflow-hidden border border-white/5">
                     <div class="relative z-10">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 mb-6 md:mb-10">
-                            <p id="main-result-label" class="text-brand-orange font-bold text-[10px] md:text-sm uppercase tracking-[0.3em] md:tracking-[0.5em]">GANANCIA ESTIMADA TOTAL</p>
-                            <div class="flex items-center gap-3 md:gap-4 bg-brand-orange px-4 md:px-6 py-2 md:py-3 rounded-xl md:rounded-2xl border border-white/30 shadow-lg hover-grow cursor-default">
-                                <span class="text-[8px] md:text-[10px] text-white font-black uppercase tracking-widest">Tasa Anual</span>
-                                <span id="rate-badge" class="text-white text-xl md:text-3xl font-display font-black">6.00%</span>
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-10">
+                            <p id="main-result-label" class="text-brand-orange font-bold text-[9px] md:text-xs uppercase tracking-[0.4em]">GANANCIA ESTIMADA</p>
+                            <div class="flex items-center gap-3 bg-brand-orange px-4 py-2 rounded-xl border border-white/20 shadow-md hover-grow cursor-default">
+                                <span class="text-[8px] text-white font-black uppercase tracking-widest">TEA</span>
+                                <span id="rate-badge" class="text-white text-xl md:text-2xl font-display font-black">6.00%</span>
                             </div>
                         </div>
                         
-                        <div class="mb-8 md:mb-12">
+                        <div class="mb-8 md:mb-10">
                             <div class="glow-main inline-block">
-                                <span id="main-result-value" class="text-6xl sm:text-8xl md:text-[10rem] font-display font-bold tracking-tighter leading-none">0</span>
-                                <span class="text-2xl md:text-5xl font-bold uppercase ml-2 md:ml-4">Bs</span>
+                                <span id="main-result-value" class="text-6xl sm:text-8xl md:text-9xl font-display font-bold tracking-tighter leading-none">0</span>
+                                <span class="text-2xl md:text-4xl font-bold uppercase ml-2">Bs</span>
                             </div>
                         </div>
 
-                        <div id="secondary-result" class="grid grid-cols-2 gap-6 md:gap-12 border-t border-white/10 pt-8 md:pt-12">
-                            <!-- JS Injection -->
+                        <div id="secondary-result" class="grid grid-cols-2 gap-6 border-t border-white/10 pt-8">
+                            <!-- Inyectado por JS -->
                         </div>
                     </div>
                 </div>
 
-                <!-- FICHA PERSPECTIVA -->
-                <div class="px-2 md:px-4">
-                    <h3 class="text-[9px] md:text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] md:tracking-[0.4em] mb-6 md:mb-8 flex items-center gap-3 md:gap-4">
-                        <span class="w-8 md:w-12 h-[1px] bg-slate-200"></span> COMPARATIVA DE TIEMPOS
+                <!-- PERSPECTIVAS -->
+                <div class="px-2">
+                    <h3 class="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                        <span class="w-8 h-[1px] bg-slate-200"></span> PROYECCIÓN EN OTROS TIEMPOS
                     </h3>
-                    <div id="perspective-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-                        <!-- JS Cards -->
+                    <div id="perspective-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Inyectado por JS -->
                     </div>
                 </div>
 
@@ -249,34 +264,31 @@
         </div>
     </main>
 
-    <!-- MODAL -->
-    <div id="leadModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 md:p-6 modal-overlay" onclick="if(event.target === this) closeLeadModal()">
-        <div class="bg-white w-full max-w-lg rounded-[2.5rem] md:rounded-[4rem] overflow-hidden shadow-2xl border border-white/20 relative" onclick="event.stopPropagation()">
-            <button onclick="closeLeadModal()" class="absolute top-6 md:top-10 right-6 md:right-10 text-slate-300 hover:text-brand-orange transition-colors p-2"><i class="fa-solid fa-xmark text-2xl md:text-3xl"></i></button>
+    <!-- MODAL MINIMALISTA -->
+    <div id="leadModal" class="fixed inset-0 z-[100] hidden flex items-center justify-center p-4 modal-overlay" onclick="if(event.target === this) closeLeadModal()">
+        <div class="bg-white w-full max-w-md rounded-[2rem] overflow-hidden shadow-2xl border border-white/20 relative" onclick="event.stopPropagation()">
+            <button onclick="closeLeadModal()" class="absolute top-6 right-6 text-slate-300 hover:text-brand-orange transition-colors"><i class="fa-solid fa-xmark text-xl"></i></button>
             
-            <div class="p-8 md:p-14">
-                <div class="text-center mb-8 md:mb-12">
-                    <div class="w-16 md:w-24 h-16 md:h-24 bg-brand-navy text-brand-orange rounded-2xl md:rounded-[2rem] flex items-center justify-center mx-auto mb-6 md:mb-8 shadow-2xl relative rotate-3">
-                        <i class="fa-solid fa-gem text-2xl md:text-4xl"></i>
-                    </div>
-                    <h2 class="text-2xl md:text-4xl font-display font-bold text-brand-navy tracking-tight">Tu Plan VIP</h2>
-                    <p class="text-slate-400 text-base md:text-lg mt-2 md:mt-4 font-medium italic">Asesoría personalizada inmediata.</p>
+            <div class="p-8 md:p-10">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-display font-bold text-brand-navy tracking-tight">Solicitud Personalizada</h2>
+                    <p class="text-slate-400 text-sm mt-1 font-medium italic">Un oficial senior te contactará en breve.</p>
                 </div>
                 
-                <div class="space-y-4 md:space-y-6">
-                    <div class="p-6 md:p-8 bg-slate-50 rounded-2xl md:rounded-[2.5rem] border border-slate-100 flex justify-between items-center">
-                        <div class="max-w-[60%]">
-                            <p class="text-[8px] md:text-[10px] font-black text-slate-400 uppercase mb-1">Producto Seleccionado</p>
-                            <span class="text-[10px] md:text-xs font-bold text-brand-navy leading-tight" id="modal-summary-prod">DPF Premium</span>
+                <div class="space-y-4">
+                    <div class="p-5 bg-slate-50 rounded-xl border border-slate-100 flex justify-between items-center">
+                        <div class="max-w-[70%]">
+                            <p class="text-[8px] font-black text-slate-400 uppercase mb-0.5" id="modal-summary-label">Monto Solicitado</p>
+                            <span class="text-xs font-bold text-brand-navy leading-tight" id="modal-summary-prod">DPF Premium</span>
                         </div>
-                        <span class="text-xl md:text-3xl font-black text-brand-orange" id="modal-summary-monto">0 Bs</span>
+                        <span class="text-xl font-black text-brand-orange" id="modal-summary-monto">0 Bs</span>
                     </div>
-                    <div class="space-y-3 md:space-y-4">
-                        <input type="text" id="leadName" placeholder="Nombre completo" class="w-full p-4 md:p-6 bg-slate-50 border-2 border-transparent focus:border-brand-orange rounded-2xl md:rounded-3xl outline-none transition-all font-semibold text-base md:text-lg shadow-inner">
-                        <input type="tel" id="leadPhone" placeholder="Celular / WhatsApp" class="w-full p-4 md:p-6 bg-slate-50 border-2 border-transparent focus:border-brand-orange rounded-2xl md:rounded-3xl outline-none transition-all font-semibold text-base md:text-lg shadow-inner">
+                    <div class="space-y-3">
+                        <input type="text" id="leadName" placeholder="Tu nombre" class="w-full p-4 bg-slate-50 border border-slate-100 focus:border-brand-orange rounded-xl outline-none transition-all font-semibold text-sm">
+                        <input type="tel" id="leadPhone" placeholder="Tu número de celular" class="w-full p-4 bg-slate-50 border border-slate-100 focus:border-brand-orange rounded-xl outline-none transition-all font-semibold text-sm">
                     </div>
-                    <button id="submitBtn" onclick="submitLead()" class="btn-shine w-full py-4 md:py-6 bg-brand-orange text-white font-bold rounded-2xl md:rounded-3xl shadow-2xl shadow-orange-600/40 hover:bg-orange-600 hover:scale-[1.01] transition-all text-[10px] md:text-sm uppercase tracking-widest mt-4 md:mt-6">
-                        CONFIRMAR SOLICITUD
+                    <button onclick="submitLead()" class="btn-shine w-full py-4 bg-brand-orange text-white font-bold rounded-xl shadow-lg shadow-orange-600/20 hover:bg-orange-600 transition-all text-xs uppercase tracking-widest mt-2">
+                        CONFIRMAR Y ENVIAR
                     </button>
                 </div>
             </div>
@@ -285,15 +297,33 @@
 
     <script>
         const CONFIG = {
-            DPF: [{ id: 'dpf', prefix: 'Inversión', name: 'DPF Premium', icon: 'fa-chart-line', min: 1000, max: 10000000, minP: 90, maxP: 1080, unit: 'días', stepTime: 10 }],
+            DPF: [{ 
+                id: 'dpf', prefix: 'Inversión', name: 'DPF Premium', icon: 'fa-chart-line', min: 1000, max: 10000000, minP: 90, maxP: 1080, unit: 'días', stepTime: 10,
+                req: ["Tasa fija anual garantizada.", "Renovación automática disponible.", "Oferta limitada vigente hasta el 31/12/2025."]
+            }],
             AHORRO: [
-                { id: 'agil', prefix: 'Caja de Ahorro', name: 'Fortaleza Ágil', icon: 'fa-bolt', min: 1000, max: 10000000, minP: 1, maxP: 120, unit: 'meses', stepTime: 1 },
-                { id: 'crece', prefix: 'Caja de Ahorro', name: 'Fortaleza Crece', icon: 'fa-arrow-up-right-dots', min: 5000, max: 10000000, minP: 1, maxP: 120, unit: 'meses', stepTime: 1 }
+                { 
+                    id: 'agil', prefix: 'Caja de Ahorro', name: 'Fortaleza Ágil', icon: 'fa-bolt', min: 1000, max: 10000000, minP: 1, maxP: 120, unit: 'meses', stepTime: 1,
+                    req: ["Retiros ilimitados sin costo.", "Cero cobro de mantenimiento mensual.", "Disponibilidad inmediata de fondos.", "Capitalización mensual de intereses."]
+                },
+                { 
+                    id: 'crece', prefix: 'Caja de Ahorro', name: 'Fortaleza Crece', icon: 'fa-arrow-up-right-dots', min: 5000, max: 10000000, minP: 1, maxP: 120, unit: 'meses', stepTime: 1,
+                    req: ["Tasa preferencial para saldos > Bs 350,000.", "Permite 5 retiros libres al mes.", "Sin cargos administrativos de mantenimiento.", "Ideal para ahorros progresivos."]
+                }
             ],
             CREDITO: [
-                { id: 'consumo', prefix: 'Crédito', name: 'Consumo', icon: 'fa-cart-shopping', min: 14000, max: 210000, minP: 12, maxP: 60, unit: 'meses', stepTime: 1 },
-                { id: 'vehicular', prefix: 'Crédito', name: 'Vehicular', icon: 'fa-car', min: 35000, max: 350000, minP: 12, maxP: 60, unit: 'meses', stepTime: 1 },
-                { id: 'vivienda', prefix: 'Crédito', name: 'Vivienda Tradicional', icon: 'fa-house', min: 140000, max: 3500000, minP: 12, maxP: 240, unit: 'meses', stepTime: 1 }
+                { 
+                    id: 'consumo', prefix: 'Crédito', name: 'Consumo', icon: 'fa-cart-shopping', min: 14000, max: 210000, minP: 12, maxP: 60, unit: 'meses', stepTime: 1,
+                    req: ["Libre disponibilidad (viajes, salud, compras).", "A sola firma hasta Bs 210,000.", "Tasa fija durante el primer año.", "Aprobación ágil para Plan Sueldo."]
+                },
+                { 
+                    id: 'vehicular', prefix: 'Crédito', name: 'Vehicular', icon: 'fa-car', min: 35000, max: 350000, minP: 12, maxP: 60, unit: 'meses', stepTime: 1,
+                    req: ["Financia el 80% en vehículos nuevos.", "Garantía prendaria (el mismo vehículo).", "Tasa fija los primeros 12 meses.", "Seguro automotor incluido en cuota."]
+                },
+                { 
+                    id: 'vivienda', prefix: 'Crédito', name: 'Vivienda Tradicional', icon: 'fa-house', min: 140000, max: 3500000, minP: 12, maxP: 240, unit: 'meses', stepTime: 1,
+                    req: ["Plazo extendido hasta 20 años (240 meses).", "Financiamiento del 80% del valor comercial.", "Tasa mínima competitiva para montos altos.", "Seguro de desgravamen incluido."]
+                }
             ]
         };
 
@@ -320,10 +350,8 @@
                 const btn = document.getElementById(`btn-${m}`);
                 if(m === mode) {
                     btn.classList.add('active-tab');
-                    btn.classList.remove('bg-brand-navy', 'text-white');
                 } else {
                     btn.classList.remove('active-tab');
-                    btn.classList.add('bg-brand-navy', 'text-white');
                 }
             });
             renderProductPills();
@@ -334,7 +362,6 @@
             container.innerHTML = '';
             CONFIG[activeMode].forEach((prod, idx) => {
                 const btn = document.createElement('button');
-                // Ajustado para evitar cortes en hover mediante clases de padding generosas
                 btn.className = `product-pill px-6 md:px-10 py-4 md:py-5 rounded-xl md:rounded-2xl text-[9px] md:text-[10px] font-bold transition-all uppercase tracking-widest flex-shrink-0 ${idx === 0 ? 'active' : ''}`;
                 btn.innerHTML = `<i class="fa-solid ${prod.icon} mr-2"></i> ${prod.name}`;
                 btn.onclick = () => {
@@ -370,6 +397,17 @@
             document.getElementById('min-plazo-label').innerText = prod.minP;
             document.getElementById('max-plazo-label').innerText = prod.maxP;
             document.getElementById('unit-label').innerText = prod.unit;
+            
+            // Renderizado de requisitos en punteos
+            const reqList = document.getElementById('req-list');
+            reqList.innerHTML = '';
+            prod.req.forEach(item => {
+                const li = document.createElement('li');
+                li.className = "text-[10px] text-slate-900 leading-tight font-medium flex items-start gap-2";
+                li.innerHTML = `<i class="fa-solid fa-circle-check text-brand-orange mt-0.5 text-[8px]"></i> <span>${item}</span>`;
+                reqList.appendChild(li);
+            });
+
             updateCalculations();
         }
 
@@ -433,30 +471,29 @@
             
             const infoBox = document.getElementById('secondary-result');
             if (activeMode !== 'CREDITO') {
-                document.getElementById('main-result-label').innerText = "GANANCIA ESTIMADA TOTAL";
+                document.getElementById('main-result-label').innerText = "GANANCIA ESTIMADA";
                 infoBox.innerHTML = `
                     <div class="flex flex-col hover-grow cursor-default">
-                        <span class="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3">Total a Recibir</span>
-                        <span class="text-white font-bold text-2xl md:text-5xl tracking-tighter transition-colors duration-500">${formatter.format(m + res)} Bs</span>
+                        <span class="text-white/40 text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5">Total a Recibir</span>
+                        <span class="text-white font-bold text-2xl md:text-4xl tracking-tighter transition-all duration-500">${formatter.format(m + res)} Bs</span>
                     </div>
-                    <div class="flex flex-col border-l border-white/10 pl-4 md:pl-10 hover-grow cursor-default">
-                        <span class="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3">Rendimiento</span>
-                        <span class="text-brand-orange font-bold text-lg md:text-2xl tracking-tight uppercase italic">Garantizado</span>
+                    <div class="flex flex-col border-l border-white/10 pl-6 hover-grow cursor-default">
+                        <span class="text-white/40 text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5">Estado</span>
+                        <span class="text-brand-orange font-bold text-lg md:text-xl uppercase italic">Garantizado</span>
                     </div>`;
             } else {
                 document.getElementById('main-result-label').innerText = "CUOTA MENSUAL ESTIMADA";
-                const ahorroDiario = Math.round(res/30);
                 infoBox.innerHTML = `
                     <div class="flex flex-col hover-grow cursor-default">
-                        <span class="text-brand-orange text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2 md:mb-3">AHORRO DIARIO META</span>
-                        <div class="flex items-center gap-2 md:gap-4">
-                             <span class="text-white font-black text-3xl md:text-6xl tracking-tighter transition-colors duration-500">${ahorroDiario} Bs</span>
-                             <span class="text-[8px] md:text-xs text-white/40 uppercase font-black">al día</span>
+                        <span class="text-brand-orange text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5">Ahorro Diario</span>
+                        <div class="flex items-baseline gap-1">
+                             <span class="text-white font-black text-3xl md:text-4xl tracking-tighter transition-all duration-500">${Math.round(res/30)} Bs</span>
+                             <span class="text-[7px] text-white/40 uppercase font-black">/ día</span>
                         </div>
                     </div>
-                    <div class="flex flex-col border-l border-white/10 pl-4 md:pl-10 hover-grow cursor-default">
-                        <span class="text-white/40 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-2 md:mb-3">Sueldo Sugerido</span>
-                        <span class="text-white font-bold text-xl md:text-4xl tracking-tighter">${formatter.format(Math.round(res / 0.3))} Bs</span>
+                    <div class="flex flex-col border-l border-white/10 pl-6 hover-grow cursor-default">
+                        <span class="text-white/40 text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5">Sueldo Mínimo</span>
+                        <span class="text-white font-bold text-xl md:text-2xl tracking-tighter">${formatter.format(Math.round(res / 0.3))} Bs</span>
                     </div>`;
             }
             renderPerspectives(m);
@@ -465,52 +502,51 @@
         function renderPerspectives(m) {
             const container = document.getElementById('perspective-grid');
             container.innerHTML = '';
-            if (activeMode !== 'CREDITO') {
+            const isCredito = activeMode === 'CREDITO';
+            const labelText = isCredito ? "Cuota Mensual" : "Ganancia Estimada";
+
+            if (!isCredito) {
                 const intervals = activeProduct.id === 'dpf' 
-                    ? [{label: 'A 200 Días', p: 200}, {label: 'A 1 Año (360d)', p: 360}, {label: 'A 2 Años (720d)', p: 720}, {label: 'A 3 Años (1080d)', p: 1080}]
+                    ? [{label: 'A 200 Días', p: 200}, {label: 'A 1 Año', p: 360}, {label: 'A 2 Años', p: 720}, {label: 'A 3 Años', p: 1080}]
                     : [{label: 'A 6 Meses', p: 6}, {label: 'A 1 Año', p: 12}, {label: 'A 2 Años', p: 24}, {label: 'A 5 Años', p: 60}];
                 
                 intervals.forEach(item => {
                     const tasa = getTasa(m, item.p);
                     const ganancia = calculateResults(m, item.p, tasa);
                     container.innerHTML += `
-                        <div class="card-pro p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] group">
-                            <div class="flex justify-between items-center mb-4 md:mb-6">
-                                 <span class="text-[8px] md:text-[10px] font-bold text-brand-navy uppercase tracking-widest">${item.label}</span>
-                                 <span class="text-[8px] md:text-[10px] font-black bg-brand-orange text-white border border-brand-orange px-2 md:px-3 py-1 md:py-1.5 rounded-full uppercase hover-grow cursor-default">${(tasa*100).toFixed(2)}%</span>
+                        <div class="card-pro p-6 rounded-2xl group">
+                            <div class="flex justify-between items-center mb-4">
+                                 <span class="text-[8px] font-bold text-brand-navy uppercase tracking-widest">${item.label}</span>
+                                 <span class="text-[8px] font-black text-brand-orange border border-brand-orange/20 px-2 py-1 rounded-md bg-orange-50/50">${(tasa*100).toFixed(2)}%</span>
                             </div>
-                            <div class="num-block">
-                                <span class="text-3xl md:text-4xl font-display font-bold text-brand-navy tracking-tighter">${formatter.format(ganancia)}</span> 
-                                <span class="text-lg md:text-xl font-bold text-brand-navy ml-1">Bs</span>
+                            <div class="flex flex-col">
+                                <span class="text-[8px] text-slate-400 font-bold uppercase mb-1">${labelText}</span>
+                                <div class="flex items-baseline">
+                                    <span class="text-3xl font-display font-bold text-brand-navy tracking-tighter">${formatter.format(ganancia)}</span> 
+                                    <span class="text-base font-bold text-brand-navy ml-1">Bs</span>
+                                </div>
                             </div>
-                            <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-slate-50 flex justify-between items-center">
-                                <span class="text-[8px] md:text-[9px] text-slate-800 font-bold uppercase tracking-wider">Monto Total Recibido:</span>
-                                <span class="text-xs md:text-sm font-black text-brand-orange">${formatter.format(m + ganancia)} Bs</span>
-                            </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             } else {
-                const plazos = [12, 24, 36, 48, 60, 120, 240].filter(val => val <= activeProduct.maxP && val >= activeProduct.minP);
+                const plazos = [12, 24, 60, 120, 240].filter(val => val <= activeProduct.maxP && val >= activeProduct.minP);
                 plazos.forEach(item => {
                     const tasa = getTasa(m, item);
                     const cuota = calculateResults(m, item, tasa);
                     container.innerHTML += `
-                        <div class="card-pro p-6 md:p-8 rounded-[1.5rem] md:rounded-[2.5rem] group ${item === parseFloat(document.getElementById('slider-plazo').value) ? 'border-brand-orange bg-orange-50/10' : ''}">
-                             <div class="flex justify-between items-center mb-4 md:mb-6">
-                                 <span class="text-[8px] md:text-[10px] font-bold text-brand-navy uppercase tracking-widest">PLAZO ${item} MESES</span>
-                                 <i class="fa-solid fa-shield-halved text-brand-orange text-xs md:text-sm"></i>
+                        <div class="card-pro p-6 rounded-2xl group ${item === parseFloat(document.getElementById('slider-plazo').value) ? 'border-brand-orange bg-orange-50/20' : ''}">
+                             <div class="flex justify-between items-center mb-4">
+                                 <span class="text-[8px] font-bold text-brand-navy uppercase tracking-widest">Plazo ${item} Meses</span>
+                                 <i class="fa-solid fa-shield-halved text-brand-orange text-[10px]"></i>
                             </div>
-                            <div class="num-block">
-                                <span class="text-3xl md:text-4xl font-display font-bold text-brand-navy tracking-tighter">${formatter.format(cuota)}</span> 
-                                <span class="text-lg md:text-xl font-bold text-brand-navy ml-1">Bs</span>
+                            <div class="flex flex-col">
+                                <span class="text-[8px] text-slate-400 font-bold uppercase mb-1">${labelText}</span>
+                                <div class="flex items-baseline">
+                                    <span class="text-3xl font-display font-bold text-brand-navy tracking-tighter">${formatter.format(cuota)}</span> 
+                                    <span class="text-base font-bold text-brand-navy ml-1">Bs</span>
+                                </div>
                             </div>
-                            <div class="mt-4 md:mt-6 pt-4 md:pt-6 border-t border-slate-50 flex justify-between items-center">
-                                <span class="text-[8px] md:text-[9px] text-slate-800 font-bold uppercase tracking-wider">Ingreso Mínimo Sugerido:</span>
-                                <span class="text-xs md:text-sm font-black text-brand-orange">${formatter.format(Math.round(cuota/0.3))} Bs</span>
-                            </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
             }
         }
@@ -520,6 +556,7 @@
             const m = getAmountFromSteps(steps, activeProduct);
             document.getElementById('modal-summary-prod').innerText = `${activeProduct.prefix} ${activeProduct.name}`;
             document.getElementById('modal-summary-monto').innerText = formatter.format(m) + " Bs";
+            document.getElementById('modal-summary-label').innerText = activeMode === 'CREDITO' ? "Monto Solicitado" : "Monto a Invertir";
             document.getElementById('leadModal').classList.remove('hidden'); 
         }
 
@@ -527,11 +564,8 @@
         
         function submitLead() {
             const name = document.getElementById('leadName').value;
-            if(!name) {
-                showMessage("Por favor, ingresa tu nombre.");
-                return;
-            }
-            showMessage(`¡Excelente ${name}! Tu solicitud ha sido recibida. Un oficial de Banco Fortaleza te contactará pronto.`);
+            if(!name) { showMessage("Por favor, ingresa tu nombre."); return; }
+            showMessage(`¡Excelente ${name}! Solicitud enviada correctamente.`);
             closeLeadModal();
         }
 
@@ -540,14 +574,7 @@
             const plazo = document.getElementById('display-plazo').innerText;
             const res = document.getElementById('main-result-value').innerText;
             const resLabel = document.getElementById('main-result-label').innerText;
-            
-            const msg = `SIMULACION BANCO FORTALEZA\n\n` +
-                        `- Producto: ${activeProduct.prefix} ${activeProduct.name}\n` +
-                        `- Monto: ${monto} Bs\n` +
-                        `- Plazo: ${plazo} ${activeProduct.unit}\n` +
-                        `- ${resLabel}: ${res} Bs\n\n` +
-                        `Deseo recibir más información para concretar mi solicitud.`;
-            
+            const msg = `SIMULACION BANCO FORTALEZA\n\n- Producto: ${activeProduct.prefix} ${activeProduct.name}\n- Monto: ${monto} Bs\n- Plazo: ${plazo} ${activeProduct.unit}\n- ${resLabel}: ${res} Bs\n\nDeseo recibir más información.`;
             window.open(`https://wa.me/59164188659?text=${encodeURIComponent(msg)}`, '_blank');
         }
 
