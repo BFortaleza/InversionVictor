@@ -23,13 +23,17 @@
                         'bar-down': 'barDown 0.8s cubic-bezier(0.65, 0, 0.35, 1) forwards',
                         'logo-fade': 'logoFade 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.6s forwards',
                         'text-reveal': 'textReveal 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1s forwards',
-                        'sweep-shine': 'sweepShine 4s linear infinite'
+                        'sweep-shine': 'sweepShine 4s linear infinite',
+                        'pulse-subtle': 'pulseSubtle 2s infinite',
+                        'shake': 'shake 0.4s cubic-bezier(.36,.07,.19,.97) both'
                     },
                     keyframes: {
                         barDown: { '0%': { transform: 'translateY(-100%)' }, '100%': { transform: 'translateY(0)' } },
                         logoFade: { '0%': { opacity: '0', transform: 'scale(0.99) translateY(0)' }, '100%': { opacity: '1', transform: 'scale(1) translateY(0)' } },
                         textReveal: { '0%': { opacity: '0', transform: 'translateY(15px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
-                        sweepShine: { '0%': { left: '-100%' }, '30%': { left: '100%' }, '100%': { left: '100%' } }
+                        sweepShine: { '0%': { left: '-100%' }, '30%': { left: '100%' }, '100%': { left: '100%' } },
+                        pulseSubtle: { '0%, 100%': { transform: 'scale(1)', boxShadow: '0 10px 25px -5px rgba(0, 40, 85, 0.1)' }, '50%': { transform: 'scale(1.02)', boxShadow: '0 20px 30px -10px rgba(0, 40, 85, 0.3)' } },
+                        shake: { '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' }, '20%, 80%': { transform: 'translate3d(2px, 0, 0)' }, '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' }, '40%, 60%': { transform: 'translate3d(4px, 0, 0)' } }
                     }
                 }
             }
@@ -143,9 +147,11 @@
             font-size: 2.5rem;
             padding: 0.5rem 60px 0.5rem 0;
             outline: none;
-            transition: border-color 0.3s ease;
+            transition: all 0.3s ease;
         }
         .monto-input:focus { border-color: #FF6B00; }
+        .monto-input.invalid { border-color: #FF6B00; color: #FF6B00; }
+
         @media (min-width: 768px) {
             .monto-input { font-size: 3rem; }
         }
@@ -178,6 +184,15 @@
             background-position: right 1rem center;
             background-size: 1rem;
         }
+
+        .copy-btn {
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+        .copy-btn:hover {
+            opacity: 1;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 <body class="antialiased text-slate-700 pb-10 md:pb-20">
@@ -191,7 +206,6 @@
     
     <header class="relative z-10 text-center">
         <div class="h-[110px] flex items-center justify-center opacity-0 animate-logo-fade">
-             <!-- LOGO ACTUALIZADO -->
              <img src="https://i.ibb.co/rLZLtT5/logo-blanco-naranja.png" alt="Banco Fortaleza" class="h-10 md:h-14 drop-shadow-xl transition-all duration-1000 ease-in-out hover:scale-105 cursor-pointer">
         </div>
         <div class="pt-6 md:pt-10 pb-8 md:pb-12 px-4 opacity-0 animate-text-reveal">
@@ -226,17 +240,18 @@
                 <!-- BLOQUE 1: CONFIGURACIÓN DE DATOS -->
                 <div class="bg-white p-6 md:p-10 rounded-[2.5rem] md:rounded-[3rem] border border-slate-50 shadow-xl space-y-8">
                     
-                    <!-- Entrada Manual: Capital con Flechas -->
+                    <!-- Entrada Manual: Capital con Flechas y Validación -->
                     <div>
                         <div class="flex justify-between items-end mb-2">
-                            <label class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Capital a Proyectar</label>
+                            <label id="label-monto" class="text-[9px] font-black text-slate-300 uppercase tracking-widest">Monto de Inversión</label>
                             <span class="text-lg font-black text-brand-orange">Bs</span>
                         </div>
-                        <div class="monto-input-wrapper">
+                        <div class="monto-input-wrapper" id="monto-input-container">
                             <input type="text" id="input-monto" 
                                    class="monto-input tracking-tighter" 
                                    placeholder="0"
-                                   oninput="formatMontoInput(this)">
+                                   oninput="formatMontoInput(this)"
+                                   onkeydown="handleMontoKeydown(event)">
                             <div class="monto-arrows">
                                 <button onclick="stepMonto(1000)" class="monto-arrow-btn" title="Aumentar 1.000"><i class="fa-solid fa-chevron-up"></i></button>
                                 <button onclick="stepMonto(-1000)" class="monto-arrow-btn" title="Disminuir 1.000"><i class="fa-solid fa-chevron-down"></i></button>
@@ -260,7 +275,7 @@
                         <input type="range" id="slider-plazo" class="slider-premium" oninput="updateCalculations()">
                         <div class="flex justify-between text-[8px] font-bold text-slate-300 mt-3 uppercase">
                             <span id="min-plazo-label">90</span>
-                            <span id="max-plazo-label">1.080</span>
+                            <span id="max-plazo-label">1,080</span>
                         </div>
                     </div>
                 </div>
@@ -272,9 +287,10 @@
             <!-- RESULTADOS -->
             <div class="lg:col-span-7 space-y-6 md:space-y-8">
                 
-                <div class="glass-dark rounded-[2.5rem] md:rounded-[3.5rem] p-8 md:p-12 text-white relative shadow-2xl overflow-hidden border border-white/5">
+                <!-- CARD PRINCIPAL (Altura optimizada y Copy Resumen) -->
+                <div class="glass-dark rounded-[2.5rem] md:rounded-[3.5rem] p-6 md:p-8 text-white relative shadow-2xl overflow-hidden border border-white/5">
                     <div class="relative z-10">
-                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8 md:mb-10">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4 md:mb-6">
                             <p id="main-result-label" class="text-brand-orange font-bold text-[9px] md:text-xs uppercase tracking-[0.4em]">GANANCIA ESTIMADA</p>
                             <div class="flex items-center gap-3 bg-brand-orange px-4 py-2 rounded-xl border border-white/20 shadow-md hover-grow cursor-default">
                                 <span class="text-[8px] text-white font-black uppercase tracking-widest">TEA</span>
@@ -282,22 +298,34 @@
                             </div>
                         </div>
                         
-                        <div class="mb-8 md:mb-10">
+                        <div class="mb-4 md:mb-6">
                             <div class="glow-main inline-block">
-                                <span id="main-result-value" class="text-6xl sm:text-8xl md:text-9xl font-display font-bold tracking-tighter leading-none transition-all">0</span>
+                                <span id="main-result-value" class="text-6xl sm:text-7xl md:text-8xl font-display font-bold tracking-tighter leading-none transition-all">0</span>
                                 <span class="text-2xl md:text-4xl font-bold uppercase ml-2">Bs</span>
                             </div>
                         </div>
 
-                        <div id="secondary-result" class="grid grid-cols-2 gap-6 border-t border-white/10 pt-8"></div>
+                        <div id="secondary-result" class="grid grid-cols-2 gap-4 md:gap-8 border-t border-white/10 pt-6">
+                            <!-- Inyectado por JS -->
+                        </div>
+
+                        <!-- MEJORA: Botón copiar resumen simulación -->
+                        <div class="mt-6 flex justify-end">
+                            <button onclick="copyToClipboard()" class="copy-btn flex items-center gap-2 text-[9px] uppercase font-bold text-white/50 hover:text-white transition-all">
+                                <i class="fa-solid fa-copy"></i> Copiar Resumen
+                            </button>
+                        </div>
                     </div>
                 </div>
 
+                <!-- PERSPECTIVAS -->
                 <div class="px-2">
                     <h3 class="text-[8px] md:text-[9px] font-black text-slate-400 uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
                         <span class="w-8 h-[1px] bg-slate-200"></span> PROYECCIÓN EN OTROS TIEMPOS
                     </h3>
-                    <div id="perspective-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                    <div id="perspective-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- JS Cards -->
+                    </div>
                 </div>
 
                 <!-- BLOQUE ACCIONES MÓVIL -->
@@ -370,6 +398,12 @@
             setTimeout(() => { el.style.display = 'none'; }, 4000);
         }
 
+        // Manejo de flechas de teclado
+        function handleMontoKeydown(e) {
+            if (e.key === "ArrowUp") { e.preventDefault(); stepMonto(1000); }
+            if (e.key === "ArrowDown") { e.preventDefault(); stepMonto(-1000); }
+        }
+
         function formatMontoInput(input) {
             let value = input.value.replace(/\D/g, ""); 
             let start = input.selectionStart;
@@ -377,7 +411,10 @@
 
             if (value !== "") {
                 let numericValue = parseInt(value, 10);
-                if (numericValue > activeProduct.max) numericValue = activeProduct.max;
+                if (numericValue > activeProduct.max) {
+                    numericValue = activeProduct.max;
+                    triggerShake();
+                }
                 input.value = formatter.format(numericValue);
                 
                 let newLen = input.value.length;
@@ -388,11 +425,22 @@
             updateCalculations();
         }
 
+        function triggerShake() {
+            const container = document.getElementById('monto-input-container');
+            container.classList.add('animate-shake');
+            setTimeout(() => container.classList.remove('animate-shake'), 400);
+        }
+
         function stepMonto(delta) {
             let current = getMontoNumeric();
             let next = current + delta;
+            
             if (next < activeProduct.min) next = activeProduct.min;
-            if (next > activeProduct.max) next = activeProduct.max;
+            if (next > activeProduct.max) {
+                next = activeProduct.max;
+                triggerShake();
+            }
+            
             document.getElementById('input-monto').value = formatter.format(next);
             updateCalculations();
         }
@@ -409,6 +457,10 @@
                 const btn = document.getElementById(`btn-${m}`);
                 m === mode ? btn.classList.add('active-tab') : btn.classList.remove('active-tab');
             });
+            
+            const label = document.getElementById('label-monto');
+            label.innerText = mode === 'CREDITO' ? 'Monto del Crédito' : 'Monto de Inversión';
+
             renderProductPills();
         }
 
@@ -452,7 +504,7 @@
         function renderActionBlocks(prod) {
             const content = `
                 <div class="space-y-4">
-                    <button onclick="openLeadModal()" class="btn-shine w-full py-4 md:py-5 bg-brand-navy text-white font-bold rounded-2xl hover:bg-brand-blue transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-xl active:scale-95">
+                    <button onclick="openLeadModal()" class="animate-pulse-subtle btn-shine w-full py-4 md:py-5 bg-brand-navy text-white font-bold rounded-2xl hover:bg-brand-blue transition-all flex items-center justify-center gap-3 text-base md:text-lg shadow-xl active:scale-95">
                         <i class="fa-solid fa-crown text-brand-orange"></i> QUIERO MI PLAN
                     </button>
                     <button onclick="sendWhatsApp()" class="w-full py-4 border-2 border-emerald-500 text-emerald-600 font-bold rounded-2xl hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 text-sm">
@@ -529,14 +581,17 @@
             const p = parseFloat(document.getElementById('slider-plazo').value);
             const t = getTasa(m, p);
             
-            // Mejora: Validación de rango visual
             const minLabel = document.getElementById('min-monto-label');
+            const inputField = document.getElementById('input-monto');
+            
             if (m < activeProduct.min) {
                 minLabel.classList.remove('text-slate-300');
                 minLabel.classList.add('text-brand-orange');
+                inputField.classList.add('invalid');
             } else {
                 minLabel.classList.remove('text-brand-orange');
                 minLabel.classList.add('text-slate-300');
+                inputField.classList.remove('invalid');
             }
 
             document.getElementById('display-plazo').innerText = p;
@@ -557,8 +612,8 @@
                 document.getElementById('main-result-label').innerText = "GANANCIA ESTIMADA";
                 infoBox.innerHTML = `
                     <div class="flex flex-col hover-grow cursor-default">
-                        <span class="text-white/40 text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5">Monto Final (Capital + Interés)</span>
-                        <span class="text-white font-bold text-2xl md:text-4xl tracking-tighter transition-all duration-500">${formatter.format(m + res)} Bs</span>
+                        <span class="text-white/40 text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5 leading-tight">Monto Final (Capital + Interés)</span>
+                        <span class="text-white font-bold text-2xl md:text-3xl tracking-tighter transition-all duration-500">${formatter.format(m + res)} Bs</span>
                     </div>
                     <div class="flex flex-col border-l border-white/10 pl-6 hover-grow cursor-default">
                         <span class="text-white/40 text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5">Rentabilidad</span>
@@ -568,7 +623,6 @@
                 document.getElementById('main-result-label').innerText = "CUOTA MENSUAL ESTIMADA";
                 infoBox.innerHTML = `
                     <div class="flex flex-col hover-grow cursor-default">
-                        <!-- MEJORA: Etiqueta más comprensible -->
                         <span class="text-brand-orange text-[8px] md:text-[9px] font-black uppercase tracking-widest mb-1.5 leading-tight">Ahorro diario para cubrir cuota</span>
                         <div class="flex items-baseline gap-1">
                              <span class="text-white font-black text-3xl md:text-4xl tracking-tighter transition-all duration-500">${Math.round(res/30)} Bs</span>
@@ -596,7 +650,7 @@
                 const plazos = [12, 24, 60, 120, 240].filter(val => val <= activeProduct.maxP && val >= activeProduct.minP);
                 plazos.forEach(item => {
                     const tasa = getTasa(m, item), cuota = calculateResults(m, item, tasa);
-                    container.innerHTML += `<div class="card-pro p-6 rounded-2xl group ${item === parseFloat(document.getElementById('slider-plazo').value) ? 'border-brand-orange bg-orange-50/20' : ''}"><div class="flex justify-between items-center mb-4"><span class="text-[8px] font-bold text-brand-navy uppercase tracking-widest">Plazo ${item} Meses</span><i class="fa-solid fa-shield-halved text-brand-orange text-[10px]"></i></div><div class="flex flex-col"><span class="text-[8px] text-slate-400 font-bold uppercase mb-1">${labelText}</span><div class="flex items-baseline"><span class="text-3xl font-display font-bold text-brand-navy tracking-tighter">${formatter.format(cuota)}</span><span class="text-base font-bold text-brand-navy ml-1">Bs</span></div></div></div>`;
+                    container.innerHTML += `<div class="card-pro p-6 rounded-2xl group ${item === parseFloat(document.getElementById('slider-plazo').value) ? 'border-brand-orange bg-orange-50/20 shadow-lg shadow-orange-500/10' : ''}"><div class="flex justify-between items-center mb-4"><span class="text-[8px] font-bold text-brand-navy uppercase tracking-widest">Plazo ${item} Meses</span><i class="fa-solid fa-shield-halved text-brand-orange text-[10px]"></i></div><div class="flex flex-col"><span class="text-[8px] text-slate-400 font-bold uppercase mb-1">${labelText}</span><div class="flex items-baseline"><span class="text-3xl font-display font-bold text-brand-navy tracking-tighter">${formatter.format(cuota)}</span><span class="text-base font-bold text-brand-navy ml-1">Bs</span></div></div></div>`;
                 });
             }
         }
@@ -615,6 +669,24 @@
             const name = document.getElementById('leadName').value, phone = document.getElementById('leadPhone').value, city = document.getElementById('leadCity').value;
             if(!name || !phone || !city) { showMessage("Por favor, completa todos los campos."); return; }
             showMessage(`¡Excelente ${name} de ${city}! Solicitud enviada correctamente.`); closeLeadModal();
+        }
+
+        // Función Copiar Resumen
+        function copyToClipboard() {
+            const monto = formatter.format(getMontoNumeric());
+            const plazo = document.getElementById('display-plazo').innerText;
+            const res = formatter.format(lastResult);
+            const resLabel = document.getElementById('main-result-label').innerText;
+            const tasa = document.getElementById('rate-badge').innerText;
+            const summary = `Banco Fortaleza - Resumen Simulación\nProducto: ${activeProduct.prefix} ${activeProduct.name}\nMonto: ${monto} Bs\nPlazo: ${plazo} ${activeProduct.unit}\nTasa: ${tasa}\n${resLabel}: ${res} Bs`;
+            
+            const el = document.createElement('textarea');
+            el.value = summary;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+            showMessage("Resumen copiado al portapapeles.");
         }
 
         function sendWhatsApp() {
